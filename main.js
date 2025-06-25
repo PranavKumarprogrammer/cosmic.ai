@@ -1,61 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Dark mode logic
-    let isDarkMode = true;
-    const darkModeToggleBtn = document.getElementById("darkModeToggle");
-    const moonIcon = document.getElementById("moonIcon");
-    const sunIcon = document.getElementById("sunIcon");
+    const GEMINI_API_KEY = "AIzaSyD0Bh8pwS6Q4fxi80cWlWgGuv2B5U-Q9nE";
+    const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" + GEMINI_API_KEY;
 
-    function applyTheme(theme) {
-        if (theme === "dark") {
-            document.body.classList.add("dark-mode");
-            if (moonIcon) moonIcon.classList.add("hidden");
-            if (sunIcon) sunIcon.classList.remove("hidden");
-            isDarkMode = true;
-        } else {
-            document.body.classList.remove("dark-mode");
-            if (moonIcon) moonIcon.classList.remove("hidden");
-            if (sunIcon) sunIcon.classList.add("hidden");
-            isDarkMode = false;
-        }
-        localStorage.setItem("theme", theme);
-    }
-
-    function toggleDarkMode() {
-        if (isDarkMode) {
-            applyTheme("light");
-        } else {
-            applyTheme("dark");
-        }
-    }
-
-    // On load, set dark mode by default unless user prefers light
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "light") {
-        applyTheme("light");
-    } else {
-        applyTheme("dark");
-    }
-    if (darkModeToggleBtn) {
-        darkModeToggleBtn.addEventListener("click", toggleDarkMode);
-    }
-
-    // Chat logic
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("chatInput");
     const chatMessages = document.getElementById("chatMessages");
 
-    function appendChatMessage(sender, text, type, isLoading = false) {
+    function appendChatMessage(sender, text, type) {
         const msgDiv = document.createElement("div");
-        msgDiv.className = "flex " + (type === "user" ? "justify-end" : "justify-start");
-        msgDiv.innerHTML = `
-            <div class="max-w-xl px-4 py-3 rounded-2xl shadow ${type === "user" ? 'bg-\\[\\#FF5733\\] text-white' : 'bg-gray-800 text-gray-100'}">
-                <span class="block text-xs mb-1 font-bold ${type === "user" ? '' : 'text-\\[\\#FF5733\\]'}">${sender}</span>
-                <span>${escapeHTML(text)}${isLoading ? ' <span class="animate-pulse">...</span>' : ''}</span>
-            </div>
-        `;
+        msgDiv.className = type === "user" ? "mb-2 text-right" : "mb-2 text-left";
+        msgDiv.innerHTML = `<span class="font-bold ${type === "user" ? 'text-\[\#FF5733\]' : 'text-gray-300'}">${sender}:</span> <span>${escapeHTML(text)}</span>`;
         chatMessages.appendChild(msgDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
-        return msgDiv;
     }
 
     function escapeHTML(str) {
@@ -70,29 +26,43 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    chatForm.addEventListener("submit", async function (e) {
-        e.preventDefault();
-        const msg = chatInput.value.trim();
-        if (msg) {
-            // Remove placeholder if present
-            const placeholder = chatMessages.querySelector(".italic");
-            if (placeholder) placeholder.remove();
+    async function getGeminiReply(userMessage) {
+        const body = {
+            contents: [
+                { parts: [{ text: userMessage }] }
+            ]
+        };
+        let response;
+        try {
+            response = await fetch(GEMINI_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+        } catch (networkErr) {
+            return "Network error: " + networkErr.message;
+        }
+        if (!response.ok) {
+            let errorText = await response.text();
+            return "Gemini API error: " + response.status + " " + errorText;
+        }
+        const data = await response.json();
+        return (
+            data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+            "Sorry, I couldn't get a response from Gemini."
+        );
+    }
+
+    if (chatForm && chatInput && chatMessages) {
+        chatForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const msg = chatInput.value.trim();
+            if (!msg) return;
             appendChatMessage("You", msg, "user");
             chatInput.value = "";
-            // Show loading bot message
-            const botMsgDiv = appendChatMessage("Cosmic AI", "Thinking", "bot", true);
-            try {
-                const reply = await getGeminiReply(msg);
-                botMsgDiv.querySelector("span:last-child").innerHTML = escapeHTML(reply);
-            } catch (err) {
-                let errMsg = "Sorry, there was an error contacting Gemini.";
-                if (err && err.message) {
-                    errMsg += "<br><span class='text-xs text-gray-400'>" + escapeHTML(err.message) + "</span>";
-                }
-                botMsgDiv.querySelector("span:last-child").innerHTML = errMsg;
-            }
-        }
-    });
-
-    chatInput.focus();
+            appendChatMessage("Cosmic AI", "Thinking...", "bot");
+            const reply = await getGeminiReply(msg);
+            appendChatMessage("Cosmic AI", reply, "bot");
+        });
+    }
 });
