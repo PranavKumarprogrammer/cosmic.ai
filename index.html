@@ -1,311 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cosmic AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        /* Base styles from Tailwind, customized and flattened */
-        /* Define color variables for easy theme switching */
-        :root {
-            /* Light Mode Defaults (Your original theme values) */
-            --bg-primary: #1a2b47;
-            --bg-secondary: #0d1a2f;
-            --text-default: #f7fafc; /* gray-100 */
-            --text-subtle: #a0aec0; /* gray-400 */
-            --bg-section: #2d3748; /* gray-800 */
-            --bg-card: #0d1a2f; /* Slightly darker than primary for cards/pages */
-            --accent-color: #FF5733;
-            --border-color: #4a5568; /* gray-700 */
-            --nav-bg: #1a2b47;
-            --nav-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
-            --page-content-overlay-bg: linear-gradient(to bottom right, #1a2b47, #1e3a8a); /* Hero overlay */
-            --page-content-overlay-opacity: 0.9;
-        }
-
-        /* Dark Mode Overrides */
-        body.dark-mode {
-            --bg-primary: #0a111f; /* Deeper dark background */
-            --bg-secondary: #000000; /* Pure black for deepest parts */
-            --text-default: #e0e7ff; /* Slightly bluish white for text */
-            --text-subtle: #9ca3af; /* Darker gray for subtle text */
-            --bg-section: #1f2937; /* Darker gray for section backgrounds */
-            --bg-card: #0a0a0a; /* Almost black for card backgrounds */
-            --accent-color: #FF5733; /* Accent remains the same for branding */
-            --border-color: #374151; /* Darker border */
-            --nav-bg: #111827; /* Darker nav background */
-            --nav-shadow: none; /* Can remove shadow or make it very subtle */
-            --page-content-overlay-bg: linear-gradient(to bottom right, #0a111f, #000000); /* Darker hero overlay */
-            --page-content-overlay-opacity: 0.95; /* More opaque for contrast */
-        }
-
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            color: var(--text-default); /* Use variable */
-            overflow-y: auto;
-            overflow-x: hidden;
-            position: relative;
-            background: radial-gradient(circle at center, var(--bg-primary), var(--bg-secondary)); /* Use variables */
-            transition: background-color 0.5s ease, color 0.5s ease; /* Smooth transition */
-        }
-
-        /* Apply transitions to all elements that use color variables */
-        * {
-            transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, filter 0.5s ease;
-        }
-
-        .main-galaxy-background {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .fixed-background-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .star, .shooting-star, .cosmic-dust-effect, .amorphous-glow {
-            position: absolute;
-        }
-
-        .star {
-            background-color: #fff;
-            border-radius: 50%;
-            opacity: 0;
-            animation: twinkle 5s infinite ease-in-out alternate;
-        }
-
-        /* More stars for increased density across the whole site */
-        .galaxy-star-1 { width: 2px; height: 2px; top: 10%; left: 20%; animation-delay: 0s; }
-        .galaxy-star-2 { width: 3px; height: 3px; top: 30%; left: 70%; animation-delay: 1s; }
-        .galaxy-star-3 { width: 1.5px; height: 1.5px; top: 80%; left: 40%; animation-delay: 2s; }
-        .galaxy-star-4 { width: 2.5px; height: 2.5px; top: 5%; left: 90%; animation-delay: 0.5s; }
-        .galaxy-star-5 { width: 1px; height: 1px; top: 50%; left: 10%; animation-delay: 2.5s; }
-        .galaxy-star-6 { width: 3.5px; height: 3.5px; top: 95%; left: 15%; animation-delay: 1.5s; }
-        .galaxy-star-7 { width: 2.2px; height: 2.2px; top: 25%; left: 5%; animation-delay: 3s; }
-        .galaxy-star-8 { width: 1.7px; height: 1.7px; top: 75%; left: 85%; animation-delay: 0.7s; }
-        .galaxy-star-9 { width: 2.8px; height: 2.8px; top: 15%; left: 55%; animation-delay: 1.8s; }
-        .galaxy-star-10 { width: 1.3px; height: 1.3px; top: 65%; left: 30%; animation-delay: 2.2s; }
-        .galaxy-star-11 { width: 2px; height: 2px; top: 40%; left: 5%; animation-delay: 0.4s; }
-        .galaxy-star-12 { width: 3px; height: 3px; top: 8%; left: 60%; animation-delay: 1.3s; }
-        .galaxy-star-13 { width: 1.5px; height: 1.5px; top: 55%; left: 95%; animation-delay: 2.7s; }
-        .galaxy-star-14 { width: 2.5px; height: 2.5px; top: 20%; left: 45%; animation-delay: 0.9s; }
-        .galaxy-star-15 { width: 1px; height: 1px; top: 70%; left: 50%; animation-delay: 3.5s; }
-
-        .shooting-star {
-            background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff);
-            height: 2px;
-            width: 100px;
-            opacity: 0;
-            animation: shoot 8s infinite ease-out;
-        }
-
-        .shooting-star-1 { top: 20%; left: -10%; transform: rotate(45deg); animation-delay: 3s; animation-duration: 6s; }
-        .shooting-star-2 { top: 70%; left: -30%; transform: rotate(20deg); animation-delay: 7s; animation-duration: 7s; }
-        .shooting-star-3 { top: 50%; right: -10%; transform: rotate(-30deg); animation: shoot-reverse 9s infinite ease-out; animation-delay: 1s; }
-
-        .cosmic-dust-effect { top: 0; left: 0; width: 100%; height: 100%; }
-        .cosmic-dust-1 { background: radial-gradient(circle at 70% 30%, rgba(255, 87, 51, 0.05), transparent 70%); animation: dust-drift-1 40s linear infinite alternate; }
-        .cosmic-dust-2 { background: radial-gradient(circle at 30% 80%, rgba(106, 13, 173, 0.05), transparent 70%); animation: dust-drift-2 50s linear infinite alternate; transform: scale(1.1) rotate(5deg); }
-        .cosmic-dust-3 { background: radial-gradient(circle at 50% 50%, rgba(0, 188, 212, 0.03), transparent 60%); animation: dust-drift-3 60s linear infinite alternate; transform: scale(1.2) rotate(-10deg); }
-
-        .amorphous-glow {
-            background: radial-gradient(circle, rgba(255, 87, 51, 0.1), rgba(106, 13, 173, 0.1), transparent 70%);
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.2;
-            animation: amorphous-move 30s ease-in-out infinite alternate;
-        }
-        .amorphous-glow-1 { width: 500px; height: 500px; top: -10%; left: -10%; animation-delay: 0s; }
-        .amorphous-glow-2 { width: 600px; height: 600px; bottom: -10%; right: -10%; animation-delay: 15s; }
-        .amorphous-glow-3 { width: 450px; height: 450px; top: 20%; right: 20%; background: radial-gradient(circle, rgba(0, 188, 212, 0.1), rgba(255, 87, 51, 0.08), transparent 70%); animation-delay: 8s; animation-duration: 25s; }
-
-        /* CSS Animations */
-        @keyframes spin-slow { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-        @keyframes spin-slow-reverse { from { transform: translate(-50%, -50%) rotate(360deg); } to { transform: translate(-50%, -50%) rotate(0deg); } }
-        @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1); } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.1); opacity: 0.5; } }
-        @keyframes shoot { 0% { transform: translateX(-100vw) rotate(45deg); opacity: 0; } 10% { opacity: 1; } 50% { transform: translateX(100vw) rotate(45deg); opacity: 0; } 100% { opacity: 0; } }
-        @keyframes shoot-reverse { 0% { transform: translateX(100vw) rotate(-30deg); opacity: 0; } 10% { opacity: 1; } 50% { transform: translateX(-100vw) rotate(-30deg); opacity: 0; } 100% { opacity: 0; } }
-        @keyframes dust-drift-1 { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
-        @keyframes dust-drift-2 { 0% { background-position: 100% 0%; } 100% { background-position: 0% 100%; } }
-        @keyframes dust-drift-3 { 0% { background-position: 50% 0%; } 100% { background-position: 50% 100%; } }
-        @keyframes amorphous-move { 0% { transform: translate(0, 0) scale(1); opacity: 0.2; } 25% { transform: translate(5%, 10%) scale(1.05); opacity: 0.3; } 50% { transform: translate(0%, 5%) scale(1); opacity: 0.2; } 75% { transform: translate(-5%, -10%) scale(1.05); opacity: 0.3; } 100% { transform: translate(0, 0) scale(1); opacity: 0.2; } }
-        @keyframes heading-glow { 0% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 87, 51, 0.3); } 50% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 87, 51, 0.6); } 100% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 87, 51, 0.3); } }
-        /* Dark mode specific glow adjustment */
-        body.dark-mode .page-title-glow, body.dark-mode .section-title-glow, body.dark-mode .animate-heading-glow {
-            text-shadow: 0 0 8px rgba(255, 87, 51, 0.4), 0 0 15px rgba(255, 87, 51, 0.2);
-        }
-        @keyframes blink-caret { from, to { border-right-color: transparent } 50% { border-right-color: currentColor } }
-
-        /* Utility classes using variables */
-        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
-        .font-bold { font-weight: 700; }
-        .text-\[\#FF5733\] { color: var(--accent-color); }
-        .shadow-lg { box-shadow: var(--nav-shadow); } /* Use variable */
-        .p-4 { padding: 1rem; }
-        .container { width: 100%; margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; }
-        .mx-auto { margin-left: auto; margin-right: auto; }
-        .flex { display: flex; }
-        .justify-between { justify-content: space-between; }
-        .items-center { align-items: center; }
-        .hidden { display: none; }
-        .md\:flex { display: flex; }
-        .space-x-6 > :not([hidden]) ~ :not([hidden]) { margin-right: calc(1.5rem * -1); margin-left: 1.5rem; }
-        .text-gray-200 { color: var(--text-default); } /* Use variable */
-        .hover\:text-\[\#FF5733\]:hover { color: var(--accent-color); }
-        .transition-colors { transition-property: background-color, border-color, color, fill, stroke; transition-duration: 150ms; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
-        .duration-300 { transition-duration: 300ms; }
-        .focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
-        .w-6 { width: 1.5rem; }
-        .h-6 { height: 1.5rem; }
-        .relative { position: relative; }
-        .flex-grow { flex-grow: 1; }
-        .justify-center { justify-content: center; }
-        .text-center { text-align: center; }
-        .p-8 { padding: 2rem; }
-        .overflow-hidden { overflow: hidden; }
-        .absolute { position: absolute; }
-        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-        .bg-gradient-to-br { background-image: var(--page-content-overlay-bg); } /* Use variable */
-        .opacity-90 { opacity: var(--page-content-overlay-opacity); } /* Use variable */
-        .z-0 { z-index: 0; }
-        .top-1\/2 { top: 50%; }
-        .left-1\/2 { left: 50%; }
-        .-translate-x-1\/2 { transform: translateX(-50%); }
-        .-translate-y-1\/2 { transform: translateY(-50%); }
-        .w-\[800px\] { width: 800px; }
-        .h-\[800px\] { height: 800px; }
-        .rounded-full { border-radius: 9999px; }
-        .border-4 { border-width: 4px; }
-        .border-\[\#FF5733\] { border-color: var(--accent-color); }
-        .border-opacity-20 { border-color: rgba(255, 87, 51, 0.2); }
-        .animate-spin-slow { animation: spin-slow 60s linear infinite; }
-        .md\:block { display: block; }
-        .w-\[600px\] { width: 600px; }
-        .h-\[600px\] { height: 600px; }
-        .border-opacity-30 { border-color: rgba(255, 87, 51, 0.3); }
-        .animate-spin-slow-reverse { animation: spin-slow-reverse 80s linear infinite; }
-        .text-5xl { font-size: 3rem; line-height: 1; }
-        .md\:text-7xl { font-size: 4.5rem; line-height: 1; }
-        .font-extrabold { font-weight: 800; }
-        .text-white { color: var(--text-default); } /* Use variable */
-        .leading-tight { line-height: 1.25; }
-        .drop-shadow-lg { filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.04)) drop-shadow(0 4px 3px rgba(0, 0, 0, 0.1)); }
-        .animate-heading-glow { animation: heading-glow 4s ease-in-out infinite; }
-        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-        .md\:text-2xl { font-size: 1.5rem; line-height: 2rem; }
-        .text-gray-300 { color: var(--text-subtle); } /* Use variable */
-        .bg-\[\#FF5733\] { background-color: var(--accent-color); }
-        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-        .px-8 { padding-left: 2rem; padding-right: 2rem; }
-        .hover\:bg-orange-600:hover { background-color: var(--hover-orange); }
-        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
-        .transform { transform: var(--tw-transform); }
-        .hover\:scale-105:hover { transform: scale(1.05); }
-        .flex-col { flex-direction: column; }
-        .sm\:flex-row { flex-direction: row; }
-        .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; }
-        .sm\:space-y-0 > :not([hidden]) ~ :not([hidden]) { margin-top: 0; }
-        .sm\:space-x-4 > :not([hidden]) ~ :not([hidden]) { margin-right: calc(1rem * -1); margin-left: 1rem; }
-        .bg-transparent { background-color: transparent; }
-        .border-2 { border-width: 2px; }
-        .hover\:bg-\[\#FF5733\]:hover { background-color: var(--accent-color); }
-        .hover\:text-white:hover { color: #fff; }
-        .typing-cursor {
-            display: inline-block;
-            vertical-align: bottom;
-            width: 0.5em;
-            border-right: 2px solid currentColor;
-            animation: blink-caret 0.75s step-end infinite;
-        }
-
-        /* Section specific styles */
-        .bg-\[\#1a2b47\] { background-color: var(--bg-primary); } /* Used by hero header background */
-        .bg-gray-800 { background-color: var(--bg-section); } /* Use variable, used by capability cards on home */
-        .py-16 { padding-top: 4rem; padding-bottom: 4rem; }
-        .px-4 { padding-left: 1rem; padding-right: 1rem; }
-        .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-        .mb-12 { margin-bottom: 3rem; }
-        .grid { display: grid; }
-        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-        .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        .gap-8 { gap: 2rem; }
-        .rounded-lg { border-radius: 0.5rem; }
-        .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
-        .border { border-width: 1px; }
-        .border-gray-700 { border-color: var(--border-color); } /* Use variable */
-        .hover\:border-\[\#FF5733\]:hover { border-color: var(--accent-color); }
-        .hover\:-translate-y-2:hover { transform: translateY(-0.5rem); }
-        .mb-3 { margin-bottom: 0.75rem; }
-        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-        .leading-relaxed { line-height: 1.625; }
-        .list-disc { list-style-type: disc; }
-        .list-inside { list-style-position: inside; }
-        .text-left { text-align: left; }
-        .max-w-5xl { max-width: 64rem; }
-        .page-title-glow { text-shadow: 0 0 10px rgba(255, 87, 51, 0.6), 0 0 20px rgba(255, 87, 51, 0.4); }
-        .section-title-glow { text-shadow: 0 0 8px rgba(255, 87, 51, 0.5), 0 0 15px rgba(255, 87, 51, 0.3); }
-        .mt-8 { margin-top: 2rem; }
-        .mb-6 { margin-bottom: 1.5rem; }
-        .text-gray-400 { color: var(--text-subtle); } /* Use variable */
-        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
-        .border-t { border-top-width: 1px; }
-        .mt-2 { margin-top: 0.5rem; }
-
-        /* Page content backgrounds and opacities */
-        .bg-gray-900 { background-color: var(--bg-card); } /* Use variable, used by About, Capabilities, Contact, Coming Soon pages */
-
-        /* Conditional display for pages handled by JavaScript */
-        .page-content { display: none; }
-        .page-content.active { display: flex; flex-direction: column; flex-grow: 1; }
-
-        /* Mobile specific styles for nav menu */
-        @media (min-width: 768px) { /* md breakpoint */
-            .md\:hidden { display: none; }
-        }
-        @media (max-width: 767px) { /* Before md breakpoint */
-            .hidden { display: none; }
-        }
-
-        /* Dark Mode Toggle Button specific styles */
-        #darkModeToggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-subtle); /* Icon color */
-            border-radius: 9999px; /* Make it circular */
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        #darkModeToggle:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--text-default);
-        }
-
-        #darkModeToggle svg {
-            width: 24px;
-            height: 24px;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="index.css" />
 </head>
+
 <body class="main-galaxy-background">
     <div class="fixed-background-elements">
         <div class="star galaxy-star-1"></div>
@@ -338,28 +42,42 @@
     </div>
 
     <div class="relative z-10 flex-grow flex flex-col">
-        <nav class="bg-\[\#1a2b47\] shadow-lg p-4 relative z-20" style="background-color: var(--nav-bg); box-shadow: var(--nav-shadow);">
+        <nav class="bg-\[\#1a2b47\] shadow-lg p-4 relative z-20">
             <div class="container mx-auto flex justify-between items-center">
-                <a href="#" class="text-2xl font-bold text-\[\#FF5733\]" onclick="setCurrentPage('home'); return false;">
+                <a href="#" class="text-2xl font-bold text-\[\#FF5733\]"
+                    onclick="setCurrentPage('home'); return false;">
                     Cosmic AI
                 </a>
-                <div class="hidden md:flex space-x-6 items-center"> <a href="#" class="text-gray-200 hover:text-\[\#FF5733\] transition-colors duration-300" onclick="scrollToSection('hero'); return false;">Home</a>
-                    <a href="#" class="text-gray-200 hover:text-\[\#FF5733\] transition-colors duration-300" onclick="setCurrentPage('aboutAI'); return false;">About AI</a>
-                    <a href="#" class="text-gray-200 hover:text-\[\#FF5733\] transition-colors duration-300" onclick="setCurrentPage('capabilitiesAI'); return false;">Capabilities</a>
-                    <a href="#" class="text-gray-200 hover:text-\[\#FF5733\] transition-colors duration-300" onclick="setCurrentPage('contact'); return false;">Contact</a>
+                <div class="hidden md:flex space-x-6 items-center">
+                    <a href="#" class="text-gray-200 hover:text-\[\#FF5733\] transition-colors duration-300"
+                        onclick="scrollToSection('hero'); return false;">Home</a>
+                    <a href="#" class="text-gray-200 hover:text-\[\#FF5733\] transition-colors duration-300"
+                        onclick="setCurrentPage('aboutAI'); return false;">About AI</a>
+                    <a href="#" class="text-gray-200 hover:text-\[\#FF5733\] transition-colors duration-300"
+                        onclick="setCurrentPage('capabilitiesAI'); return false;">Capabilities</a>
+                    <a href="#" class="text-gray-200 hover:text-\[\#FF5733\] transition-colors duration-300"
+                        onclick="setCurrentPage('contact'); return false;">Contact</a>
                     <button id="darkModeToggle" aria-label="Toggle dark mode">
-                        <svg id="moonIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        <svg id="moonIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                            </path>
                         </svg>
-                        <svg id="sunIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M2 12h1m15.354 5.354l-.707.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        <svg id="sunIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 3v1m0 16v1m9-9h1M2 12h1m15.354 5.354l-.707.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                            </path>
                         </svg>
                     </button>
                 </div>
                 <div class="md:hidden">
                     <button class="text-gray-200 focus:outline-none">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
                 </div>
@@ -367,26 +85,36 @@
         </nav>
 
         <div id="home-page" class="page-content active">
-            <header id="hero" class="relative flex-grow flex items-center justify-center text-center p-8 overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-br from-\[\#1a2b47\] to-blue-900 opacity-90 z-0" style="background-image: var(--page-content-overlay-bg); opacity: var(--page-content-overlay-opacity);"></div>
-                
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border-4 border-\[\#FF5733\] border-opacity-20 animate-spin-slow z-0 hidden md:block"></div>
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border-4 border-\[\#FF5733\] border-opacity-30 animate-spin-slow-reverse z-0 hidden md:block"></div>
+            <header id="hero"
+                class="relative flex-grow flex items-center justify-center text-center p-8 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-\[\#1a2b47\] to-blue-900 opacity-90 z-0"></div>
+
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border-4 border-\[\#FF5733\] border-opacity-20 animate-spin-slow z-0 hidden md:block">
+                </div>
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border-4 border-\[\#FF5733\] border-opacity-30 animate-spin-slow-reverse z-0 hidden md:block">
+                </div>
 
                 <div class="relative z-10 max-w-4xl mx-auto">
-                    <h1 class="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-4 drop-shadow-lg animate-heading-glow">
-                        Unlock the Power of <span class="text-\[\#FF5733\]">Cosmic AI</span>
+                    <h1
+                        class="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-4 drop-shadow-lg animate-heading-glow">
+                        Unlock the Power of
+                        <span class="text-\[\#FF5733\]">Cosmic AI</span>
                     </h1>
                     <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto">
                         Experience intelligent solutions designed to transform your world.
                         Our advanced AI brings innovation closer to you.
                     </p>
-                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                        <button class="bg-\[\#FF5733\] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105"
+                    <div
+                        class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button
+                            class="bg-\[\#FF5733\] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105"
                             onclick="setCurrentPage('aboutAI'); return false;">
                             Learn More About AI
                         </button>
-                        <button id="askCosmicAIButton" class="bg-transparent border-2 border-\[\#FF5733\] text-\[\#FF5733\] font-bold py-3 px-8 rounded-full shadow-lg hover:bg-\[\#FF5733\] hover:text-white transition-all duration-300 transform hover:scale-105"
+                        <button id="askCosmicAIButton"
+                            class="bg-transparent border-2 border-\[\#FF5733\] text-\[\#FF5733\] font-bold py-3 px-8 rounded-full shadow-lg hover:bg-\[\#FF5733\] hover:text-white transition-all duration-300 transform hover:scale-105"
                             onclick="setCurrentPage('comingSoon'); return false;">
                             <span id="typedText"></span><span class="typing-cursor">|</span>
                         </button>
@@ -394,79 +122,155 @@
                 </div>
             </header>
 
-            <section id="ai-capabilities" class="bg-\[\#1a2b47\] py-16 px-4" style="background-color: var(--bg-primary);">
+            <section id="ai-capabilities" class="bg-\[\#1a2b47\] py-16 px-4">
                 <div class="container mx-auto">
-                    <h2 class="text-4xl font-bold text-white text-center mb-12">Our AI Capabilities</h2>
+                    <h2 class="text-4xl font-bold text-white text-center mb-12">
+                        Our AI Capabilities
+                    </h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <div class="bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 hover:border-\[\#FF5733\] transition-all duration-300 transform hover:-translate-y-2" style="background-color: var(--bg-section); border-color: var(--border-color);">
+                        <div
+                            class="bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 hover:border-\[\#FF5733\] transition-all duration-300 transform hover:-translate-y-2">
                             <div class="text-\[\#FF5733\] mb-4 text-5xl text-center">
-                                <svg class="mx-auto" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L2 22l1.7-4.1C1.9 15.6 2 13.5 2 12a8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5A8.5 8.5 0 0 1 21 11.5z"></path></svg>
+                                <svg class="mx-auto" xmlns="http://www.w3.org/2000/svg" width="48" height="48"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path
+                                        d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L2 22l1.7-4.1C1.9 15.6 2 13.5 2 12a8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5A8.5 8.5 0 0 1 21 11.5z">
+                                    </path>
+                                </svg>
                             </div>
-                            <h3 class="text-2xl font-semibold text-white mb-3 text-center">Natural Language Processing</h3>
+                            <h3 class="text-2xl font-semibold text-white mb-3 text-center">
+                                Natural Language Processing
+                            </h3>
                             <p class="text-gray-300 text-center">
-                                Understand, interpret, and generate human language for chatbots, sentiment analysis, and translation.
+                                Understand, interpret, and generate human language for
+                                chatbots, sentiment analysis, and translation.
                             </p>
                         </div>
-                        <div class="bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 hover:border-\[\#FF5733\] transition-all duration-300 transform hover:-translate-y-2" style="background-color: var(--bg-section); border-color: var(--border-color);">
+                        <div
+                            class="bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 hover:border-\[\#FF5733\] transition-all duration-300 transform hover:-translate-y-2">
                             <div class="text-\[\#FF5733\] mb-4 text-5xl text-center">
-                                <svg class="mx-auto" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.75 1.3a2 2 0 0 0 .73 2.73l.15.08a2 2 0 0 1 1 1.74v.18a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.75-1.3a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle><line x1="17" y1="7" x2="22" y2="2"></line><polyline points="22 7 22 2 17 2"></polyline></svg>
+                                <svg class="mx-auto" xmlns="http://www.w3.org/2000/svg" width="48" height="48"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path
+                                        d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.75 1.3a2 2 0 0 0 .73 2.73l.15.08a2 2 0 0 1 1 1.74v.18a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.75-1.3a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74V4a2 2 0 0 0-2-2z">
+                                    </path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <line x1="17" y1="7" x2="22" y2="2"></line>
+                                    <polyline points="22 7 22 2 17 2"></polyline>
+                                </svg>
                             </div>
-                            <h3 class="text-2xl font-semibold text-white mb-3 text-center">Machine Learning & Analytics</h3>
+                            <h3 class="text-2xl font-semibold text-white mb-3 text-center">
+                                Machine Learning & Analytics
+                            </h3>
                             <p class="text-gray-300 text-center">
-                                Build intelligent models to predict trends, automate decisions, and extract insights from data.
+                                Build intelligent models to predict trends, automate
+                                decisions, and extract insights from data.
                             </p>
                         </div>
-                        <div class="bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 hover:border-\[\#FF5733\] transition-all duration-300 transform hover:-translate-y-2" style="background-color: var(--bg-section); border-color: var(--border-color);">
+                        <div
+                            class="bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 hover:border-\[\#FF5733\] transition-all duration-300 transform hover:-translate-y-2">
                             <div class="text-\[\#FF5733\] mb-4 text-5xl text-center">
-                                <svg class="mx-auto" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="mx-auto" xmlns="http://www.w3.org/2000/svg" width="48" height="48"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
                             </div>
-                            <h3 class="text-2xl font-semibold text-white mb-3 text-center">Computer Vision</h3>
+                            <h3 class="text-2xl font-semibold text-white mb-3 text-center">
+                                Computer Vision
+                            </h3>
                             <p class="text-gray-300 text-center">
-                                Enable systems to "see" and interpret visual data for image recognition, object detection, and more.
+                                Enable systems to "see" and interpret visual data for image
+                                recognition, object detection, and more.
                             </p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <footer id="contact-footer" class="bg-\[\#1a2b47\] py-8 px-4 text-center text-gray-400 border-t border-gray-700" style="background-color: var(--bg-primary); border-color: var(--border-color);">
+            <footer id="contact-footer"
+                class="bg-\[\#1a2b47\] py-8 px-4 text-center text-gray-400 border-t border-gray-700">
                 <div class="container mx-auto">
                     <p>&copy; 2024 Cosmic AI. All rights reserved.</p>
-                    <p class="mt-2" style="color: var(--text-subtle);">Innovating with intelligence.</p>
+                    <p class="mt-2">
+                        Innovating with intelligence.
+                    </p>
                 </div>
             </footer>
         </div>
 
         <div id="aboutAI-page" class="page-content">
             <div class="flex-grow flex flex-col items-center justify-center p-8 text-center text-gray-100">
-                <div class="relative z-10 max-w-5xl mx-auto bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl border border-gray-700" style="background-color: var(--bg-card); border-color: var(--border-color);">
-                    <h2 class="text-5xl font-extrabold text-\[\#FF5733\] mb-8 page-title-glow">Exploring Artificial Intelligence</h2>
-                    
-                    <p class="text-lg leading-relaxed mb-6" style="color: var(--text-default);">
-                        Artificial Intelligence (AI) is a rapidly evolving field of computer science dedicated to creating systems that can perform tasks normally requiring human intelligence. This includes learning from data, recognizing patterns, making decisions, understanding natural language, and self-correction.
+                <div
+                    class="relative z-10 max-w-5xl mx-auto bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl border border-gray-700">
+                    <h2 class="text-5xl font-extrabold text-\[\#FF5733\] mb-8 page-title-glow">
+                        Exploring Artificial Intelligence
+                    </h2>
+
+                    <p class="text-lg leading-relaxed mb-6">
+                        Artificial Intelligence (AI) is a rapidly evolving field of
+                        computer science dedicated to creating systems that can perform
+                        tasks normally requiring human intelligence. This includes
+                        learning from data, recognizing patterns, making decisions,
+                        understanding natural language, and self-correction.
                     </p>
 
-                    <h3 class="text-3xl font-bold text-white mb-4 mt-8 section-title-glow">The Core of AI</h3>
-                    <p class="text-lg leading-relaxed mb-6" style="color: var(--text-default);">
-                        At its core, AI seeks to enable machines to mimic cognitive functions associated with the human mind, such as learning and problem-solving. This is achieved through various techniques and disciplines, including:
+                    <h3 class="text-3xl font-bold text-white mb-4 mt-8 section-title-glow">
+                        The Core of AI
+                    </h3>
+                    <p class="text-lg leading-relaxed mb-6">
+                        At its core, AI seeks to enable machines to mimic cognitive
+                        functions associated with the human mind, such as learning and
+                        problem-solving. This is achieved through various techniques and
+                        disciplines, including:
                     </p>
-                    <ul class="list-disc list-inside text-lg text-left mx-auto max-w-2xl mb-6" style="color: var(--text-default);">
-                        <li class="mb-2"><strong>Machine Learning:</strong> Algorithms that allow systems to learn from data without explicit programming.</li>
-                        <li class="mb-2"><strong>Deep Learning:</strong> A subset of machine learning using neural networks with multiple layers to learn complex patterns.</li>
-                        <li class="mb-2"><strong>Natural Language Processing (NLP):</strong> Enabling computers to understand, interpret, and generate human language.</li>
-                        <li class="mb-2"><strong>Computer Vision:</strong> Giving computers the ability to "see" and interpret visual information from the world.</li>
-                        <li class="mb-2"><strong>Robotics:</strong> Integrating AI with physical machines to perform tasks in the real world.</li>
+                    <ul class="list-disc list-inside text-lg text-left mx-auto max-w-2xl mb-6">
+                        <li class="mb-2">
+                            <strong>Machine Learning:</strong> Algorithms that allow systems
+                            to learn from data without explicit programming.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Deep Learning:</strong> A subset of machine learning
+                            using neural networks with multiple layers to learn complex
+                            patterns.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Natural Language Processing (NLP):</strong> Enabling
+                            computers to understand, interpret, and generate human language.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Computer Vision:</strong> Giving computers the ability
+                            to "see" and interpret visual information from the world.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Robotics:</strong> Integrating AI with physical machines
+                            to perform tasks in the real world.
+                        </li>
                     </ul>
 
-                    <h3 class="text-3xl font-bold text-white mb-4 mt-8 section-title-glow">Impact and Future</h3>
-                    <p class="text-lg leading-relaxed mb-6" style="color: var(--text-default);">
-                        AI is transforming industries ranging from healthcare and finance to transportation and entertainment. It offers unparalleled opportunities for innovation, efficiency, and discovery. As AI continues to advance, it promises to reshape our society, creating new possibilities and addressing some of the world's most pressing challenges.
+                    <h3 class="text-3xl font-bold text-white mb-4 mt-8 section-title-glow">
+                        Impact and Future
+                    </h3>
+                    <p class="text-lg leading-relaxed mb-6">
+                        AI is transforming industries ranging from healthcare and finance
+                        to transportation and entertainment. It offers unparalleled
+                        opportunities for innovation, efficiency, and discovery. As AI
+                        continues to advance, it promises to reshape our society, creating
+                        new possibilities and addressing some of the world's most pressing
+                        challenges.
                     </p>
-                    <p class="text-lg leading-relaxed mb-8" style="color: var(--text-default);">
-                        At Cosmic AI, we are at the forefront of this revolution, committed to building intelligent systems that are not only powerful but also ethical, transparent, and beneficial for all of humanity.
+                    <p class="text-lg leading-relaxed mb-8">
+                        At Cosmic AI, we are at the forefront of this revolution,
+                        committed to building intelligent systems that are not only
+                        powerful but also ethical, transparent, and beneficial for all of
+                        humanity.
                     </p>
 
-                    <button class="bg-\[\#FF5733\] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 mt-8"
+                    <button
+                        class="bg-\[\#FF5733\] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 mt-8"
                         onclick="setCurrentPage('home'); return false;">
                         Back to Home
                     </button>
@@ -476,47 +280,100 @@
 
         <div id="capabilitiesAI-page" class="page-content">
             <div class="flex-grow flex flex-col items-center justify-center p-8 text-center text-gray-100">
-                <div class="relative z-10 max-w-5xl mx-auto bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl border border-gray-700" style="background-color: var(--bg-card); border-color: var(--border-color);">
-                    <h2 class="text-5xl font-extrabold text-\[\#FF5733\] mb-8 page-title-glow">Comprehensive AI Capabilities</h2>
-                    
-                    <p class="text-lg leading-relaxed mb-6" style="color: var(--text-default);">
-                        Cosmic AI offers a suite of advanced artificial intelligence capabilities designed to empower your business and projects. Our expertise spans various domains of AI, delivering intelligent solutions tailored to your unique needs.
+                <div
+                    class="relative z-10 max-w-5xl mx-auto bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl border border-gray-700">
+                    <h2 class="text-5xl font-extrabold text-\[\#FF5733\] mb-8 page-title-glow">
+                        Comprehensive AI Capabilities
+                    </h2>
+
+                    <p class="text-lg leading-relaxed mb-6">
+                        Cosmic AI offers a suite of advanced artificial intelligence
+                        capabilities designed to empower your business and projects. Our
+                        expertise spans various domains of AI, delivering intelligent
+                        solutions tailored to your unique needs.
                     </p>
 
-                    <h3 class="text-3xl font-bold text-white mb-4 mt-8 section-title-glow">Natural Language Processing (NLP)</h3>
-                    <p class="text-lg leading-relaxed mb-4" style="color: var(--text-default);">
-                        Our NLP capabilities enable machines to understand, interpret, and generate human language, making interactions more intuitive and data analysis more profound.
+                    <h3 class="text-3xl font-bold text-white mb-4 mt-8 section-title-glow">
+                        Natural Language Processing (NLP)
+                    </h3>
+                    <p class="text-lg leading-relaxed mb-4">
+                        Our NLP capabilities enable machines to understand, interpret, and
+                        generate human language, making interactions more intuitive and
+                        data analysis more profound.
                     </p>
-                    <ul class="list-disc list-inside text-lg text-left mx-auto max-w-2xl mb-6" style="color: var(--text-default);">
-                        <li class="mb-2"><strong>Sentiment Analysis:</strong> Extract emotions and opinions from text data.</li>
-                        <li class="mb-2"><strong>Text Summarization:</strong> Condense long documents into concise summaries.</li>
-                        <li class="mb-2"><strong>Chatbots & Virtual Assistants:</strong> Develop intelligent conversational interfaces.</li>
-                        <li class="mb-2"><strong>Machine Translation:</strong> Translate text between languages with high accuracy.</li>
+                    <ul class="list-disc list-inside text-lg text-left mx-auto max-w-2xl mb-6">
+                        <li class="mb-2">
+                            <strong>Sentiment Analysis:</strong> Extract emotions and
+                            opinions from text data.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Text Summarization:</strong> Condense long documents
+                            into concise summaries.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Chatbots & Virtual Assistants:</strong> Develop
+                            intelligent conversational interfaces.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Machine Translation:</strong> Translate text between
+                            languages with high accuracy.
+                        </li>
                     </ul>
 
-                    <h3 class="text-3xl font-bold text-white mb-4 mt-8 section-title-glow">Machine Learning & Predictive Analytics</h3>
-                    <p class="text-lg leading-relaxed mb-4" style="color: var(--text-default);">
-                        Leverage the power of data to discover patterns, make predictions, and optimize processes with our robust machine learning solutions.
+                    <h3 class="text-3xl font-bold text-white mb-4 mt-8 section-title-glow">
+                        Machine Learning & Predictive Analytics
+                    </h3>
+                    <p class="text-lg leading-relaxed mb-4">
+                        Leverage the power of data to discover patterns, make predictions,
+                        and optimize processes with our robust machine learning solutions.
                     </p>
-                    <ul class="list-disc list-inside text-lg text-left mx-auto max-w-2xl mb-6" style="color: var(--text-default);">
-                        <li class="mb-2"><strong>Predictive Modeling:</strong> Forecast future outcomes and trends.</li>
-                        <li class="mb-2"><strong>Anomaly Detection:</strong> Identify unusual patterns or outliers in data.</li>
-                        <li class="mb-2"><strong>Recommendation Systems:</strong> Personalize user experiences with intelligent suggestions.</li>
-                        <li class="mb-2"><strong>Automated Decision Making:</strong> Implement data-driven decision processes.</li>
+                    <ul class="list-disc list-inside text-lg text-left mx-auto max-w-2xl mb-6">
+                        <li class="mb-2">
+                            <strong>Predictive Modeling:</strong> Forecast future outcomes
+                            and trends.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Anomaly Detection:</strong> Identify unusual patterns or
+                            outliers in data.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Recommendation Systems:</strong> Personalize user
+                            experiences with intelligent suggestions.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Automated Decision Making:</strong> Implement
+                            data-driven decision processes.
+                        </li>
                     </ul>
 
-                    <h3 class="text-3xl font-bold text-white mb-4 mt-8 section-title-glow">Computer Vision</h3>
-                    <p class="text-lg leading-relaxed mb-4" style="color: var(--text-default);">
-                        Give your systems the ability to "see" and understand the visual world, unlocking new possibilities in various applications.
+                    <h3 class="text-3xl font-bold text-white mb-4 mt-8 section-title-glow">
+                        Computer Vision
+                    </h3>
+                    <p class="text-lg leading-relaxed mb-4">
+                        Give your systems the ability to "see" and understand the visual
+                        world, unlocking new possibilities in various applications.
                     </p>
-                    <ul class="list-disc list-inside text-lg text-left mx-auto max-w-2xl mb-6" style="color: var(--text-default);">
-                        <li class="mb-2"><strong>Object Detection & Recognition:</strong> Identify and classify objects within images and videos.</li>
-                        <li class="mb-2"><strong>Facial Recognition:</strong> Secure and authenticate users through facial features.</li>
-                        <li class="mb-2"><strong>Image Analysis:</strong> Extract meaningful information from visual content.</li>
-                        <li class="mb-2"><strong>Augmented Reality Integration:</strong> Blend digital information with real-world views.</li>
+                    <ul class="list-disc list-inside text-lg text-left mx-auto max-w-2xl mb-6">
+                        <li class="mb-2">
+                            <strong>Object Detection & Recognition:</strong> Identify and
+                            classify objects within images and videos.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Facial Recognition:</strong> Secure and authenticate
+                            users through facial features.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Image Analysis:</strong> Extract meaningful information
+                            from visual content.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Augmented Reality Integration:</strong> Blend digital
+                            information with real-world views.
+                        </li>
                     </ul>
 
-                    <button class="bg-\[\#FF5733\] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 mt-8"
+                    <button
+                        class="bg-\[\#FF5733\] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 mt-8"
                         onclick="setCurrentPage('home'); return false;">
                         Back to Home
                     </button>
@@ -526,15 +383,19 @@
 
         <div id="contact-page" class="page-content">
             <div class="flex-grow flex flex-col items-center justify-center p-8 text-center text-gray-100">
-                <div class="relative z-10 max-w-2xl mx-auto bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl border border-gray-700" style="background-color: var(--bg-card); border-color: var(--border-color);">
-                    <h2 class="text-5xl font-extrabold text-\[\#FF5733\] mb-6 page-title-glow">Contact Us</h2>
+                <div
+                    class="relative z-10 max-w-2xl mx-auto bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl border border-gray-700">
+                    <h2 class="text-5xl font-extrabold text-\[\#FF5733\] mb-6 page-title-glow">
+                        Contact Us
+                    </h2>
                     <p class="text-2xl font-semibold text-gray-300">
                         THIS PAGE IS UNDER MAINTENANCE FOR NOW
                     </p>
-                    <p class="text-lg text-gray-400 mt-4" style="color: var(--text-subtle);">
+                    <p class="text-lg text-gray-400 mt-4">
                         Please check back later or use other methods to reach us.
                     </p>
-                    <button class="bg-\[\#FF5733\] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 mt-8"
+                    <button
+                        class="bg-\[\#FF5733\] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 mt-8"
                         onclick="setCurrentPage('home'); return false;">
                         Back to Home
                     </button>
@@ -544,15 +405,19 @@
 
         <div id="comingSoon-page" class="page-content">
             <div class="flex-grow flex flex-col items-center justify-center p-8 text-center text-gray-100">
-                <div class="relative z-10 max-w-2xl mx-auto bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl border border-gray-700" style="background-color: var(--bg-card); border-color: var(--border-color);">
-                    <h2 class="text-5xl font-extrabold text-\[\#FF5733\] mb-6 page-title-glow">Coming Soon!</h2>
+                <div
+                    class="relative z-10 max-w-2xl mx-auto bg-gray-900 bg-opacity-80 p-10 rounded-xl shadow-2xl border border-gray-700">
+                    <h2 class="text-5xl font-extrabold text-\[\#FF5733\] mb-6 page-title-glow">
+                        Coming Soon!
+                    </h2>
                     <p class="text-2xl font-semibold text-gray-300">
                         The "Ask Cosmic AI" feature is releasing soon.
                     </p>
-                    <p class="text-lg text-gray-400 mt-4" style="color: var(--text-subtle);">
+                    <p class="text-lg text-gray-400 mt-4">
                         Stay tuned for exciting updates!
                     </p>
-                    <button class="bg-\[\#FF5733\] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 mt-8"
+                    <button
+                        class="bg-\[\#FF5733\] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 mt-8"
                         onclick="setCurrentPage('home'); return false;">
                         Back to Home
                     </button>
@@ -560,116 +425,7 @@
             </div>
         </div>
     </div>
-
-    <script>
-        let currentPage = 'home';
-        const fullText = "Ask Cosmic AI...";
-        const typingSpeed = 100;
-        let typedTextElement;
-        let typingIntervalId;
-        let isDarkMode = false; // Track dark mode state
-
-        document.addEventListener('DOMContentLoaded', (event) => {
-            typedTextElement = document.getElementById('typedText');
-            startTypingEffect();
-
-            // Load theme preference from localStorage
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                applyTheme(savedTheme);
-            } else {
-                // Default to light mode if no preference
-                applyTheme('light');
-            }
-
-            // Set initial page visibility
-            updatePageVisibility();
-
-            // Add event listener for the dark mode toggle button
-            const darkModeToggleBtn = document.getElementById('darkModeToggle');
-            if (darkModeToggleBtn) {
-                darkModeToggleBtn.addEventListener('click', toggleDarkMode);
-            }
-        });
-
-        function startTypingEffect() {
-            let i = 0;
-            if (typingIntervalId) {
-                clearInterval(typingIntervalId);
-            }
-            if (typedTextElement) {
-                typedTextElement.textContent = '';
-            }
-
-            typingIntervalId = setInterval(() => {
-                if (typedTextElement && i < fullText.length) {
-                    typedTextElement.textContent += fullText.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(typingIntervalId);
-                }
-            }, typingSpeed);
-        }
-
-        function updatePageVisibility() {
-            document.querySelectorAll('.page-content').forEach(page => {
-                page.classList.remove('active');
-            });
-            const activePageElement = document.getElementById(currentPage + '-page');
-            if (activePageElement) {
-                activePageElement.classList.add('active');
-                document.body.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        function setCurrentPage(pageName) {
-            currentPage = pageName;
-            updatePageVisibility();
-        }
-
-        function scrollToSection(id) {
-            if (currentPage !== 'home') {
-                currentPage = 'home';
-                updatePageVisibility();
-                setTimeout(() => {
-                    const section = document.getElementById(id);
-                    if (section) {
-                        section.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }, 100);
-            } else {
-                const section = document.getElementById(id);
-                if (section) {
-                    section.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        }
-
-        function applyTheme(theme) {
-            const moonIcon = document.getElementById('moonIcon');
-            const sunIcon = document.getElementById('sunIcon');
-
-            if (theme === 'dark') {
-                document.body.classList.add('dark-mode');
-                if (moonIcon) moonIcon.classList.add('hidden');
-                if (sunIcon) sunIcon.classList.remove('hidden');
-                isDarkMode = true;
-            } else {
-                document.body.classList.remove('dark-mode');
-                if (moonIcon) moonIcon.classList.remove('hidden');
-                if (sunIcon) sunIcon.classList.add('hidden');
-                isDarkMode = false;
-            }
-            localStorage.setItem('theme', theme); // Save preference
-        }
-
-        function toggleDarkMode() {
-            if (isDarkMode) {
-                applyTheme('light');
-            } else {
-                applyTheme('dark');
-            }
-        }
-    </script>
 </body>
+
 </html>
+<script src="index.js"></script>
