@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Cosmic AI Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="index.css" />
+</head>
+<body class="main-galaxy-background min-h-screen">
+    <div class="fixed-background-elements">
+        <div class="star galaxy-star-1"></div>
+        <div class="star galaxy-star-2"></div>
+        <div class="star galaxy-star-3"></div>
+        <div class="star galaxy-star-4"></div>
+        <div class="star galaxy-star-5"></div>
+        <div class="star galaxy-star-6"></div>
+        <div class="star galaxy-star-7"></div>
+        <div class="star galaxy-star-8"></div>
+        <div class="star galaxy-star-9"></div>
+        <div class="star galaxy-star-10"></div>
+        <div class="star galaxy-star-11"></div>
+        <div class="star galaxy-star-12"></div>
+        <div class="star galaxy-star-13"></div>
+        <div class="star galaxy-star-14"></div>
+        <div class="star galaxy-star-15"></div>
+        <div class="cosmic-dust-effect cosmic-dust-1"></div>
+        <div class="cosmic-dust-effect cosmic-dust-2"></div>
+        <div class="cosmic-dust-effect cosmic-dust-3"></div>
+        <div class="amorphous-glow amorphous-glow-1"></div>
+        <div class="amorphous-glow amorphous-glow-2"></div>
+        <div class="amorphous-glow amorphous-glow-3"></div>
+        <div class="shooting-star shooting-star-1"></div>
+        <div class="shooting-star shooting-star-2"></div>
+        <div class="shooting-star shooting-star-3"></div>
+    </div>
+    <div class="flex h-screen relative z-10">
+        <!-- Sidebar -->
+        <aside class="bg-\[\#1a2b47\] text-white w-64 flex flex-col p-6 border-r border-gray-700 hidden md:flex">
+            <div class="mb-8">
+                <span class="text-3xl font-extrabold text-\[\#FF5733\]">Cosmic AI</span>
+            </div>
+            <nav class="flex flex-col gap-4 flex-1">
+                <button class="text-left px-3 py-2 rounded hover:bg-\[\#FF5733\] hover:text-white transition-all duration-200 font-semibold">New Chat</button>
+            </nav>
+            <div class="mt-auto">
+                <button class="w-full px-3 py-2 rounded bg-\[\#FF5733\] text-white font-bold hover:bg-orange-600 transition-all duration-200" onclick="window.location.href='index.html'">Back to Home</button>
+            </div>
+        </aside>
+        <!-- Main Chat Area -->
+        <main class="flex-1 flex flex-col h-screen">
+            <!-- Header -->
+            <header class="w-full px-4 py-4 border-b border-gray-700 flex items-center justify-between bg-\[\#1a2b47\] shadow-lg">
+                <span class="text-2xl font-bold text-\[\#FF5733\] flex items-center gap-2">
+                    <svg class="w-8 h-8 text-\[\#FF5733\]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                        <path stroke-width="2" d="M12 6v6l4 2"></path>
+                    </svg>
+                    Chat with Cosmic AI
+                </span>
+                <button id="darkModeToggle" aria-label="Toggle dark mode" class="ml-4">
+                    <svg id="moonIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                    <svg id="sunIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m9-9h1M2 12h1m15.354 5.354l-.707.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </button>
+            </header>
+            <!-- Chat Messages -->
+            <section id="chatMessages" class="flex-1 overflow-y-auto px-4 py-6 bg-gray-900 flex flex-col gap-4">
+                <div class="mx-auto text-center text-gray-400 italic mt-10">Start chatting with Cosmic AI!</div>
+            </section>
+            <!-- Input Area -->
+            <form id="chatForm" class="w-full px-4 py-4 bg-\[\#1a2b47\] flex gap-2 border-t border-gray-700">
+                <input id="chatInput" type="text" autocomplete="off" placeholder="Type your message..." class="flex-1 rounded-full px-4 py-3 text-black focus:outline-none" />
+                <button type="submit" class="bg-\[\#FF5733\] text-white font-bold px-6 py-2 rounded-full hover:bg-orange-600 transition-all duration-300">Send</button>
+            </form>
+        </main>
+    </div>
+    <script src="gemini.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

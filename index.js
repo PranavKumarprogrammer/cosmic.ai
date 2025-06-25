@@ -26,6 +26,24 @@ document.addEventListener("DOMContentLoaded", (event) => {
     if (darkModeToggleBtn) {
         darkModeToggleBtn.addEventListener("click", toggleDarkMode);
     }
+
+    // Chat form logic
+    const chatForm = document.getElementById("chatForm");
+    const chatInput = document.getElementById("chatInput");
+    const chatMessages = document.getElementById("chatMessages");
+    if (chatForm && chatInput && chatMessages) {
+        chatForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const msg = chatInput.value.trim();
+            if (msg) {
+                appendChatMessage("You", msg, "user");
+                chatInput.value = "";
+                setTimeout(() => {
+                    appendChatMessage("Cosmic AI", getBotReply(msg), "bot");
+                }, 700);
+            }
+        });
+    }
 });
 
 function startTypingEffect() {
@@ -107,4 +125,33 @@ function toggleDarkMode() {
     } else {
         applyTheme("dark");
     }
+}
+
+function appendChatMessage(sender, text, type) {
+    const chatMessages = document.getElementById("chatMessages");
+    if (!chatMessages) return;
+    const msgDiv = document.createElement("div");
+    msgDiv.className = type === "user"
+        ? "mb-2 text-right"
+        : "mb-2 text-left";
+    msgDiv.innerHTML = `<span class="font-bold ${type === "user" ? 'text-\[\#FF5733\]' : 'text-gray-300'}">${sender}:</span> <span>${escapeHTML(text)}</span>`;
+    chatMessages.appendChild(msgDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function getBotReply(userMsg) {
+    // Placeholder bot reply
+    return "I'm just a demo! Real AI chat coming soon.";
+}
+
+function escapeHTML(str) {
+    return str.replace(/[&<>"']/g, function (m) {
+        return ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        })[m];
+    });
 }
