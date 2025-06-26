@@ -19,14 +19,18 @@ AI Tools List:
 Stay concise, friendly, and always answer as Cosmic AI.
 `;
     // !AI tools and technology and mainly about - text removed from prompt, not related to the things below this line
+    // Use correct input and form IDs
     const chatForm = document.getElementById("chatForm");
-    const chatInput = document.getElementById("chatInput");
+    const chatInput = document.getElementById("searchInput"); // Fix: use searchInput
     const chatMessages = document.getElementById("chatMessages");
+
+    // Guard: if any required element is missing, do nothing
+    if (!chatForm || !chatInput || !chatMessages) return;
 
     function appendChatMessage(sender, text, type, isPlaceholder) {
         const msgDiv = document.createElement("div");
         msgDiv.className = type === "user" ? "mb-2 text-right" : "mb-2 text-left";
-        msgDiv.innerHTML = `<span class="font-bold ${type === "user" ? 'text-\[\#FF5733\]' : 'text-gray-300'}">${sender}:</span> <span>${escapeHTML(text)}</span>`;
+        msgDiv.innerHTML = `<span class="font-bold ${type === "user" ? 'text-[#FF5733]' : 'text-gray-300'}">${sender}:</span> <span>${escapeHTML(text)}</span>`;
         if (isPlaceholder) {
             msgDiv.classList.add("italic");
             msgDiv.innerHTML += ' <span class="loader"></span>';
@@ -108,10 +112,69 @@ Stay concise, friendly, and always answer as Cosmic AI.
     window.getLeapAIImage = getLeapAIImage;
     // --- End Leap AI image generation via backend ---
 
+    let chatFormDocked = false;
+
     chatForm.addEventListener("submit", async function (e) {
         e.preventDefault();
         const msg = chatInput.value.trim();
         if (!msg) return;
+
+        // Animate chat form from its original position to the bottom smoothly and keep it perfectly centered
+        if (!chatFormDocked) {
+            // Get bounding rects
+            const rect = chatForm.getBoundingClientRect();
+            const mainRect = chatForm.parentElement.getBoundingClientRect();
+            // Calculate start position (centered relative to parent)
+            const startLeft = rect.left - mainRect.left;
+            const startTop = rect.top - mainRect.top;
+            chatForm.style.position = "absolute";
+            chatForm.style.left = "50%";
+            chatForm.style.transform = `translateX(-50%)`;
+            chatForm.style.top = `${startTop}px`;
+            chatForm.style.width = `${rect.width}px`;
+            chatForm.style.transition = "top 0.7s cubic-bezier(0.4,0,0.2,1), opacity 0.7s cubic-bezier(0.4,0,0.2,1)";
+            chatForm.style.zIndex = "20";
+
+            // Target position: horizontally centered at the bottom
+            const mainHeight = mainRect.height;
+            const formHeight = rect.height;
+            const targetTop = mainHeight - formHeight - 24; // 24px for padding
+
+            // Animate to bottom (remains centered)
+            setTimeout(() => {
+                chatForm.style.top = `${targetTop}px`;
+                chatForm.style.opacity = "1";
+            }, 10);
+
+            // After animation, switch to fixed bottom positioning and remove inline styles
+            setTimeout(() => {
+                chatForm.style.transition = "";
+                chatForm.style.position = "";
+                chatForm.style.left = "";
+                chatForm.style.top = "";
+                chatForm.style.width = "";
+                chatForm.style.transform = "";
+                chatForm.classList.add("fixed", "bottom-0", "left-1/2", "-translate-x-1/2", "px-4", "pb-6", "z-20");
+            }, 750);
+
+            // Animate chatMessages margin
+            if (chatMessages) {
+                chatMessages.style.transition = "margin-bottom 0.7s cubic-bezier(0.4,0,0.2,1)";
+                chatMessages.style.marginBottom = "110px";
+            }
+            // Animate/hide the title smoothly
+            const cosmicAITitle = document.getElementById("cosmicAITitle");
+            if (cosmicAITitle) {
+                cosmicAITitle.style.transition = "opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1)";
+                cosmicAITitle.style.opacity = "0";
+                cosmicAITitle.style.transform = "translateY(-40px) scale(0.95)";
+                setTimeout(() => {
+                    cosmicAITitle.style.display = "none";
+                }, 700);
+            }
+            chatFormDocked = true;
+        }
+
         // Remove placeholder if present
         const placeholder = chatMessages.querySelector(".italic");
         if (placeholder) placeholder.remove();
@@ -126,7 +189,7 @@ Stay concise, friendly, and always answer as Cosmic AI.
                 const imageUrl = await window.getLeapAIImage(prompt);
                 botMsgDiv.classList.remove("italic");
                 botMsgDiv.innerHTML = `<span class="font-bold text-gray-300">Cosmic AI:</span><br>
-                    <img src="${imageUrl}" alt="${escapeHTML(prompt)}" class="rounded-lg max-w-xs max-h-80 mt-2" /><br>
+                    <img src="${escapeHTML(imageUrl)}" alt="${escapeHTML(prompt)}" class="rounded-lg max-w-xs max-h-80 mt-2" /><br>
                     <span class="text-xs text-gray-400">${escapeHTML(prompt)}</span>`;
             } catch (err) {
                 botMsgDiv.classList.remove("italic");
@@ -137,20 +200,24 @@ Stay concise, friendly, and always answer as Cosmic AI.
             return;
         }
 
-        // Otherwise, use Gemini for text reply
-        const botMsgDiv = appendChatMessage("Cosmic AI", "Thinking", "bot", true);
+        // Show only Gemini's reply, no custom or history messages
+        const botMsgDiv = appendChatMessage("Cosmic AI", "Thinking...", "bot", true);
         try {
             const reply = await getGeminiReply(msg);
-            botMsgDiv.remove();
-            appendChatMessage("Cosmic AI", reply, "bot");
+            botMsgDiv.classList.remove("italic");
+            if (reply && reply.trim()) {
+                botMsgDiv.innerHTML = `<span class="font-bold text-gray-300">Cosmic AI:</span> <span>${escapeHTML(reply)}</span>`;
+            } else {
+                botMsgDiv.innerHTML = `<span class="font-bold text-gray-300">Cosmic AI:</span> <span>Sorry, I couldn't get a response from Cosmic AI.</span>`;
+            }
         } catch (err) {
-            botMsgDiv.remove();
+            botMsgDiv.classList.remove("italic");
             let errMsg = "Sorry, there was an error contacting Cosmic AI.";
             if (err && err.message) {
                 errMsg += "<br><span class='text-xs text-gray-400'>" + escapeHTML(err.message) + "</span>";
             }
-            appendChatMessage("Cosmic AI", errMsg, "bot");
+            botMsgDiv.innerHTML = `<span class="font-bold text-gray-300">Cosmic AI:</span> <span>${errMsg}</span>`;
         }
     });
 });
-       
+
