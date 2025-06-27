@@ -86,7 +86,6 @@
         const messageDisplay = document.getElementById('messageDisplay');
         const newChatButton = document.getElementById('newChatButton');
         const settingsButton = document.getElementById('settingsButton');
-        const historyButton = document.getElementById('historyButton');
         const toggleViewButton = document.getElementById('toggleViewButton'); // Toggle View Button
         const exitButton = document.getElementById('exitButton');
         const settingsModal = document.getElementById('settingsModal');
@@ -109,6 +108,7 @@
         const historyList = document.getElementById('historyList');
         const noHistoryMessage = document.getElementById('noHistoryMessage');
         const sidebar = document.getElementById('sidebar');
+        const sidebarHistoryList = document.getElementById('sidebarHistoryList');
 
 
         // --- Functions to Update UI ---
@@ -126,9 +126,6 @@
 
             if (settingsButton)
                 settingsButton.className = settingsButton.className.replace(/focus:ring-[a-z]+-[0-9]+/g, `${activeTheme.modalButtonFocusRing}`);
-
-            if (historyButton)
-                historyButton.className = historyButton.className.replace(/focus:ring-[a-z]+-[0-9]+/g, `focus:ring-${activeTheme.modalButtonFocusRing.split('-')[1]}`); // Adjust for non-accent button
 
             if (toggleViewButton)
                 toggleViewButton.className = toggleViewButton.className.replace(/focus:ring-[a-z]+-[0-9]+/g, `focus:ring-${activeTheme.modalButtonFocusRing.split('-')[1]}`); // Adjust for non-accent button
@@ -192,255 +189,326 @@
 
 
         // --- Typewriter placeholder effect with blinking cursor ---
-        function startTypingEffect() {
-            clearInterval(typingInterval);
-            let placeholderIdx = 0;
-            let charIdx = 0;
-            let isDeleting = false;
-            let currentText = '';
-            let blinkState = true;
-            let pauseTimeout = null;
+        let typewriterActive = false;
+        let typewriterTimeout = null;
+        let typewriterBlinkTimeout = null;
+        let typewriterPaused = false;
+        let typewriterPlaceholderIdx = 0;
+        let typewriterCharIdx = 0;
+        let typewriterIsDeleting = false;
+        let typewriterCurrentText = '';
+        let typewriterBlinkState = true;
 
+        function startTypewriterEffect() {
+            stopTypewriterEffect();
+            typewriterActive = true;
+            typewriterPlaceholderIdx = 0;
+            typewriterCharIdx = 0;
+            typewriterIsDeleting = false;
+            typewriterCurrentText = '';
+            typewriterBlinkState = true;
+            type();
+            blinkCursor();
             function type() {
-                const fullText = placeholders[placeholderIdx];
-                if (!isDeleting) {
-                    if (charIdx < fullText.length) {
-                        charIdx++;
-                        currentText = fullText.substring(0, charIdx);
+                if (!typewriterActive) return;
+                const fullText = placeholders[typewriterPlaceholderIdx];
+                if (!typewriterIsDeleting) {
+                    if (typewriterCharIdx < fullText.length) {
+                        typewriterCharIdx++;
+                        typewriterCurrentText = fullText.substring(0, typewriterCharIdx);
                     } else {
-                        // Pause at end before deleting
-                        pauseTimeout = setTimeout(() => {
-                            isDeleting = true;
+                        typewriterPaused = true;
+                        typewriterTimeout = setTimeout(() => {
+                            typewriterIsDeleting = true;
+                            typewriterPaused = false;
                             type();
                         }, 1200);
                         return;
                     }
                 } else {
-                    if (charIdx > 0) {
-                        charIdx--;
-                        currentText = fullText.substring(0, charIdx);
+                    if (typewriterCharIdx > 0) {
+                        typewriterCharIdx--;
+                        typewriterCurrentText = fullText.substring(0, typewriterCharIdx);
                     } else {
-                        // Pause at start before next
-                        pauseTimeout = setTimeout(() => {
-                            isDeleting = false;
-                            placeholderIdx = (placeholderIdx + 1) % placeholders.length;
+                        typewriterPaused = true;
+                        typewriterTimeout = setTimeout(() => {
+                            typewriterIsDeleting = false;
+                            typewriterPlaceholderIdx = (typewriterPlaceholderIdx + 1) % placeholders.length;
+                            typewriterPaused = false;
                             type();
                         }, 500);
                         return;
                     }
                 }
-                // Only set placeholder if input is empty and not focused
                 if (!searchInput.value && document.activeElement !== searchInput) {
-                    searchInput.setAttribute('placeholder', currentText + (blinkState ? '|' : ' '));
+                    searchInput.setAttribute('placeholder', typewriterCurrentText + (typewriterBlinkState ? '|' : ' '));
                 }
-                typingInterval = setTimeout(type, 70);
+                typewriterTimeout = setTimeout(type, 55 + Math.random() * 40);
             }
-
-            // Blinking cursor
             function blinkCursor() {
-                blinkState = !blinkState;
-                // Only update if not typing/deleting (at end or start)
-                if ((!searchInput.value && document.activeElement !== searchInput) &&
-                    (charIdx === placeholders[placeholderIdx].length || charIdx === 0)) {
-                    searchInput.setAttribute('placeholder', currentText + (blinkState ? '|' : ' '));
+                if (!typewriterActive) return;
+                typewriterBlinkState = !typewriterBlinkState;
+                if (!searchInput.value && document.activeElement !== searchInput) {
+                    searchInput.setAttribute('placeholder', typewriterCurrentText + (typewriterBlinkState ? '|' : ' '));
                 }
-                setTimeout(blinkCursor, 500);
-            }
-
-            type();
-            blinkCursor();
-        }
-
-
-        // Function to update message display
-        function updateMessageDisplay() {
-            if (message) {
-                messageDisplay.textContent = message;
-                messageDisplay.classList.remove('hidden');
-                messageDisplay.className = messageDisplay.className.replace(/text-[a-z]+-[0-9]+/g, themeConfigs[currentThemeName].messageTextColor);
-            } else {
-                messageDisplay.classList.add('hidden');
+                typewriterBlinkTimeout = setTimeout(blinkCursor, 500);
             }
         }
-
-        // Function to toggle floating title
-        function toggleFloatingTitle() {
-            if (isFloatingTitleEnabled) {
-                cosmicAITitle.classList.add('animate-float');
-            } else {
-                cosmicAITitle.classList.remove('animate-float');
-            }
+        function stopTypewriterEffect() {
+            typewriterActive = false;
+            clearTimeout(typewriterTimeout);
+            clearTimeout(typewriterBlinkTimeout);
         }
 
-        // Function to toggle main content minimization
-        function toggleMainContentMinimization() {
-            if (isMainContentMinimized) {
-                mainContent.classList.add('main-content-minimized');
-                mainContent.classList.remove('main-content-maximized');
-            } else {
-                mainContent.classList.remove('main-content-minimized');
-                mainContent.classList.add('main-content-maximized');
-            }
+        // Always keep typewriter running unless user is typing
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                if (searchInput.value) {
+                    stopTypewriterEffect();
+                    searchInput.setAttribute('placeholder', '');
+                } else if (document.activeElement !== searchInput) {
+                    startTypewriterEffect();
+                }
+            });
+            searchInput.addEventListener('focus', () => {
+                stopTypewriterEffect();
+                searchInput.setAttribute('placeholder', '');
+            });
+            searchInput.addEventListener('blur', () => {
+                if (!searchInput.value) {
+                    startTypewriterEffect();
+                }
+            });
         }
 
-        // Update populateHistory to use userSearchHistory
-        function populateHistory() {
-            historyList.innerHTML = ''; // Clear existing history items
-
-            const historyArr = (typeof userSearchHistory !== "undefined" && userSearchHistory.length)
-                ? userSearchHistory
-                : [];
-
-            if (historyArr.length === 0) {
-                noHistoryMessage.classList.remove('hidden');
-            } else {
-                noHistoryMessage.classList.add('hidden');
-                historyArr.forEach((query, index) => {
-                    const historyItem = document.createElement('div');
-                    historyItem.className = 'p-3 bg-gray-800 rounded-md border border-gray-700 flex items-center justify-between';
-                    historyItem.innerHTML = `
-                        <span class="text-gray-200 text-sm flex-1">${query}</span>
-                        <button class="ml-4 text-gray-400 hover:text-white transition-colors duration-200 clear-history-item" data-index="${index}">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    `;
-                    historyList.appendChild(historyItem);
-                });
-
-                // Add event listeners to newly created clear buttons
-                historyList.querySelectorAll('.clear-history-item').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const index = parseInt(e.currentTarget.dataset.index);
-                        if (typeof userSearchHistory !== "undefined") {
-                            userSearchHistory.splice(index, 1); // Remove item from array
-                            if (typeof saveUserSearchHistory === "function") saveUserSearchHistory();
+        // --- Sidebar history rendering (Gemini-style) ---
+        function renderSidebarHistory() {
+            if (!sidebarHistoryList) return;
+            sidebarHistoryList.innerHTML = '';
+            // Only show when sidebar is expanded and there is history
+            if (!sidebar.classList.contains('collapsed') && typeof userSearchHistory !== "undefined" && userSearchHistory.length) {
+                userSearchHistory.slice().reverse().forEach((query, idx) => {
+                    const item = document.createElement('div');
+                    item.className = 'sidebar-history-item p-2 mb-2 bg-gray-800 rounded text-gray-200 text-sm truncate cursor-pointer hover:bg-gray-700 transition flex items-center justify-between';
+                    item.title = query;
+                    item.textContent = query;
+                    // Optional: click to re-query or fill input
+                    item.addEventListener('click', () => {
+                        if (searchInput) {
+                            searchInput.value = query;
+                            searchInput.focus();
+                            stopTypewriterEffect();
+                            searchInput.setAttribute('placeholder', '');
                         }
-                        populateHistory(); // Re-render history list
                     });
+                    // Optional: add a remove (X) button
+                    const removeBtn = document.createElement('button');
+                    removeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 hover:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>';
+                    removeBtn.className = 'ml-2 p-1 rounded hover:bg-gray-700 transition';
+                    removeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        // Remove from history and update Firestore
+                        const realIdx = userSearchHistory.length - 1 - idx;
+                        userSearchHistory.splice(realIdx, 1);
+                        if (typeof saveUserSearchHistory === "function") saveUserSearchHistory();
+                        renderSidebarHistory();
+                    });
+                    item.appendChild(removeBtn);
+                    sidebarHistoryList.appendChild(item);
                 });
+                sidebarHistoryList.style.display = 'block';
+            } else {
+                sidebarHistoryList.style.display = 'none';
             }
+        }
+        window.renderSidebarHistory = renderSidebarHistory;
+
+        // --- Sidebar expand/collapse logic ---
+        if (toggleViewButton && sidebar) {
+            toggleViewButton.addEventListener('click', () => {
+                const isCollapsed = sidebar.classList.toggle('collapsed');
+                sidebar.setAttribute('data-collapsed', isCollapsed ? "true" : "false");
+                renderSidebarHistory();
+            });
+        }
+
+        // --- Fix: Ensure toggleFloatingTitle is defined ---
+        if (typeof toggleFloatingTitle !== "function") {
+            function toggleFloatingTitle() {}
+        }
+
+        // --- Fix: Ensure renderSidebarHistory is defined ---
+        if (typeof renderSidebarHistory !== "function") {
+            function renderSidebarHistory() {}
+        }
+
+        // --- Fix: Ensure toggleMainContentMinimization is defined ---
+        if (typeof toggleMainContentMinimization !== "function") {
+            function toggleMainContentMinimization() {}
         }
 
 
-        // --- Event Handlers ---
+        // --- Typewriter effect for AI replies ---
+        /**
+         * Typewriter effect for a message element.
+         * @param {HTMLElement} el - The element to type into.
+         * @param {string} text - The text to type.
+         * @param {number} [delay=35] - Delay in ms per character.
+         * @returns {Promise<void>}
+         */
+        function typewriter(el, text, delay = 35) {
+            return new Promise(resolve => {
+                el.innerHTML = "";
+                let i = 0;
+                function type() {
+                    if (i < text.length) {
+                        el.innerHTML += text[i] === "\n" ? "<br>" : text[i];
+                        i++;
+                        setTimeout(type, delay);
+                    } else {
+                        resolve();
+                    }
+                }
+                type();
+            });
+        }
 
-        // New Chat Button click
-        newChatButton.addEventListener('click', () => {
-            searchText = '';
-            searchInput.value = '';
-            message = '';
-            updateMessageDisplay();
-            startTypingEffect(); // Restart typing effect
-            showSettingsModal = false; // Close modal if open
-            showHistoryModal = false; // Close history modal if open
-            updateSettingsModalVisibility();
-            updateHistoryModalVisibility();
+        function hideCosmicAITitle() {
+            if (cosmicAITitle) {
+                cosmicAITitle.style.display = "none";
+            }
+        }
+
+        // In your chatForm submit handler, after the first message is sent and the form is docked, hide the title:
+        chatForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const msg = searchInput.value.trim();
+            if (!msg) return;
+
+            // Move chat form to bottom after first submit
+            if (!window.chatFormDocked) {
+                chatForm.classList.add("fixed", "bottom-0", "left-1/2", "-translate-x-1/2", "px-4", "pb-6", "z-20");
+                window.chatFormDocked = true;
+                hideCosmicAITitle(); // Hide the animated title after first message
+            }
+
+            // ...existing code...
+        });
+
+        // --- Initial Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+            startTypewriterEffect();
+            toggleFloatingTitle();
+            applyTheme();
+            if (telemetryToggle) telemetryToggle.checked = isTelemetryEnabled;
+            if (historyToggle) historyToggle.checked = isSearchHistorySaved;
+            toggleMainContentMinimization();
+            renderSidebarHistory();
         });
 
         // Search Input Enter key press
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                // Let the form submit event handle the logic, do not show any custom message here
-                // Optionally, you can trigger form submission manually:
-                chatForm.requestSubmit && chatForm.requestSubmit();
-            }
-        });
+        if (searchInput && chatForm) {
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    // Let the form submit event handle the logic, do not show any custom message here
+                    // Optionally, you can trigger form submission manually:
+                    chatForm.requestSubmit && chatForm.requestSubmit();
+                }
+            });
+        }
 
         // Settings Button click
-        settingsButton.addEventListener('click', () => {
-            showSettingsModal = true;
-            showHistoryModal = false; // Close other modals
-            updateSettingsModalVisibility();
-            updateHistoryModalVisibility();
-            // Ensure values in modal reflect current state
-            themeSelect.value = currentThemeName;
-            aiVerbositySelect.value = aiVerbosity;
-            typingSpeedRange.value = typingSpeedPreference;
-            currentSpeedSpan.textContent = `Current Speed: ${typingSpeedPreference}ms/char (Lower is Faster)`;
-            floatingTitleToggle.checked = isFloatingTitleEnabled;
-            telemetryToggle.checked = isTelemetryEnabled;
-            historyToggle.checked = isSearchHistorySaved;
-            applyTheme(); // Re-apply theme to update modal specific colors
-        });
+        if (settingsButton) {
+            settingsButton.addEventListener('click', () => {
+                showSettingsModal = true;
+                showHistoryModal = false; // Close other modals
+                updateSettingsModalVisibility();
+                updateHistoryModalVisibility();
+                // Ensure values in modal reflect current state
+                if (themeSelect) themeSelect.value = currentThemeName;
+                if (aiVerbositySelect) aiVerbositySelect.value = aiVerbosity;
+                if (typingSpeedRange) typingSpeedRange.value = typingSpeedPreference;
+                if (currentSpeedSpan) currentSpeedSpan.textContent = `Current Speed: ${typingSpeedPreference}ms/char (Lower is Faster)`;
+                if (floatingTitleToggle) floatingTitleToggle.checked = isFloatingTitleEnabled;
+                if (telemetryToggle) telemetryToggle.checked = isTelemetryEnabled;
+                if (historyToggle) historyToggle.checked = isSearchHistorySaved;
+                applyTheme(); // Re-apply theme to update modal specific colors
+            });
+        }
 
         // Close Settings Modal button click
-        closeSettingsModalButton.addEventListener('click', () => {
-            showSettingsModal = false;
-            updateSettingsModalVisibility();
-        });
-
-        // History Button click
-        historyButton.addEventListener('click', () => {
-            showHistoryModal = true;
-            showSettingsModal = false; // Close other modals
-            updateHistoryModalVisibility();
-            updateSettingsModalVisibility();
-            populateHistory(); // Populate history when modal opens
-        });
+        if (closeSettingsModalButton) {
+            closeSettingsModalButton.addEventListener('click', () => {
+                showSettingsModal = false;
+                updateSettingsModalVisibility();
+            });
+        }
 
         // Close History Modal button click
-        closeHistoryModalButton.addEventListener('click', () => {
-            showHistoryModal = false;
-            updateHistoryModalVisibility();
-        });
-
-        // Toggle View Button click
-        toggleViewButton.addEventListener('click', () => {
-            if (!sidebar) return;
-            const isCollapsed = sidebar.classList.toggle('collapsed');
-            sidebar.setAttribute('data-collapsed', isCollapsed ? "true" : "false");
-        });
-
+        if (closeHistoryModalButton) {
+            closeHistoryModalButton.addEventListener('click', () => {
+                showHistoryModal = false;
+                updateHistoryModalVisibility();
+            });
+        }
 
         // Theme selection change in settings modal
-        themeSelect.addEventListener('change', (e) => {
-            currentThemeName = e.target.value;
-            applyTheme(); // Re-apply theme immediately
-        });
+        if (themeSelect) {
+            themeSelect.addEventListener('change', (e) => {
+                currentThemeName = e.target.value;
+                applyTheme(); // Re-apply theme immediately
+            });
+        }
 
         // AI Verbosity selection change
-        aiVerbositySelect.addEventListener('change', (e) => {
-            aiVerbosity = e.target.value;
-        });
+        if (aiVerbositySelect) {
+            aiVerbositySelect.addEventListener('change', (e) => {
+                aiVerbosity = e.target.value;
+            });
+        }
 
         // Typing Speed range input change
-        typingSpeedRange.addEventListener('input', (e) => {
-            typingSpeedPreference = Number(e.target.value);
-            currentSpeedSpan.textContent = `Current Speed: ${typingSpeedPreference}ms/char (Lower is Faster)`;
-            updateCustomElementStyles(); // Update slider track color dynamically
-            // Restart typing effect with new speed
-            clearInterval(typingInterval);
-            startTypingEffect();
-        });
+        if (typingSpeedRange && currentSpeedSpan) {
+            typingSpeedRange.addEventListener('input', (e) => {
+                typingSpeedPreference = Number(e.target.value);
+                currentSpeedSpan.textContent = `Current Speed: ${typingSpeedPreference}ms/char (Lower is Faster)`;
+                updateCustomElementStyles(); // Update slider track color dynamically
+                // Restart typing effect with new speed
+                clearInterval(typingInterval);
+                startTypewriterEffect();
+            });
+        }
 
         // Floating Title Toggle change
-        floatingTitleToggle.addEventListener('change', (e) => {
-            isFloatingTitleEnabled = e.target.checked;
-            toggleFloatingTitle();
-        });
+        if (floatingTitleToggle) {
+            floatingTitleToggle.addEventListener('change', (e) => {
+                isFloatingTitleEnabled = e.target.checked;
+                toggleFloatingTitle();
+            });
+        }
 
         // Telemetry Toggle change
-        telemetryToggle.addEventListener('change', (e) => {
-            isTelemetryEnabled = e.target.checked;
-        });
+        if (telemetryToggle) {
+            telemetryToggle.addEventListener('change', (e) => {
+                isTelemetryEnabled = e.target.checked;
+            });
+        }
 
         // Search History Toggle change
-        historyToggle.addEventListener('change', (e) => {
-            isSearchHistorySaved = e.target.checked;
-            if (!isSearchHistorySaved) {
+        if (historyToggle) {
+            historyToggle.addEventListener('change', (e) => {
+                isSearchHistorySaved = e.target.checked;
                 // Optionally clear history if user disables saving
-                // searchHistory = [];
-                // if (showHistoryModal) populateHistory(); // Update if history modal is open
-            }
-        });
+            });
+        }
 
         // Exit Button click
-        exitButton.addEventListener('click', () => {
-            window.close(); // Browser security might prevent this if not opened by script
-        });
+        if (exitButton) {
+            exitButton.addEventListener('click', () => {
+                window.close(); // Browser security might prevent this if not opened by script
+            });
+        }
 
 
         // --- Modal Visibility Logic with Animations ---
@@ -485,30 +553,32 @@
 
         // --- Initial Setup ---
         document.addEventListener('DOMContentLoaded', () => {
-            startTypingEffect();
+            startTypewriterEffect();
             toggleFloatingTitle();
             applyTheme(); // Apply initial theme
             // Set initial checkbox states based on variables
             telemetryToggle.checked = isTelemetryEnabled;
             historyToggle.checked = isSearchHistorySaved;
             toggleMainContentMinimization(); // Apply initial minimization state (default maximized)
+            renderSidebarHistory();
         });
 
         // --- Keep typewriter running even after user input ---
         searchInput.addEventListener('input', () => {
-            // If input is cleared and not focused, restart typewriter effect
-            if (!searchInput.value && document.activeElement !== searchInput) {
-                startTypingEffect();
+            if (searchInput.value) {
+                stopTypewriterEffect();
+                searchInput.setAttribute('placeholder', '');
+            } else if (document.activeElement !== searchInput) {
+                startTypewriterEffect();
             }
         });
         searchInput.addEventListener('focus', () => {
-            // Remove placeholder while typing
+            stopTypewriterEffect();
             searchInput.setAttribute('placeholder', '');
         });
         searchInput.addEventListener('blur', () => {
-            // Restart typewriter effect when input loses focus and is empty
             if (!searchInput.value) {
-                startTypingEffect();
+                startTypewriterEffect();
             }
         });
 
@@ -560,3 +630,17 @@
 
             // ...existing code...
         });
+
+        // --- Fix: Define TailwindColors used for dynamic CSS ---
+        const TailwindColors = {
+            'orange-400': '#fb923c',
+            'orange-500': '#f97316',
+            'blue-500': '#3b82f6',
+            'blue-700': '#1d4ed8',
+            'purple-800': '#6d28d9',
+            'red-500': '#ef4444',
+            'yellow-800': '#a16207',
+            'gray-600': '#4b5563',
+            'gray-700': '#374151',
+            // Add more as needed
+        };

@@ -135,8 +135,10 @@ Stay concise, friendly, and always answer as Cosmic AI.
             userSearchHistory = (doc.exists && doc.data().searchHistory) ? doc.data().searchHistory : [];
             // Optionally update UI if you have a function for that
             if (typeof populateHistory === "function") populateHistory();
+            if (typeof renderSidebarHistory === "function") renderSidebarHistory();
         } catch (e) {
             userSearchHistory = [];
+            if (typeof renderSidebarHistory === "function") renderSidebarHistory();
         }
     }
 
@@ -148,10 +150,9 @@ Stay concise, friendly, and always answer as Cosmic AI.
                 { searchHistory: userSearchHistory },
                 { merge: true }
             );
-            // Notify UI to update sidebar history if needed
             if (typeof renderSidebarHistory === "function") renderSidebarHistory();
         } catch (e) {
-            // Optionally handle error
+            console.error("Firestore save error:", e); // <--- Add this line
         }
     }
 
@@ -174,7 +175,6 @@ Stay concise, friendly, and always answer as Cosmic AI.
                 // Keep only the latest 50 entries (optional)
                 if (userSearchHistory.length > 50) userSearchHistory = userSearchHistory.slice(-50);
                 saveUserSearchHistory();
-                // Optionally update sidebar history immediately
                 if (typeof renderSidebarHistory === "function") renderSidebarHistory();
             }
         }
