@@ -294,12 +294,10 @@
                 : [];
             if (isExpanded && historyArr.length) {
                 historyArr.slice().reverse().forEach((query, idx) => {
-                    // Shorten query to first 6 words + …
-                    let shortQuery = query.trim().split(/\s+/);
-                    if (shortQuery.length > 6) {
-                        shortQuery = shortQuery.slice(0, 6).join(' ') + ' …';
-                    } else {
-                        shortQuery = query;
+                    // Shorten query to 24 letters + …
+                    let shortQuery = query.trim();
+                    if (shortQuery.length > 24) {
+                        shortQuery = shortQuery.slice(0, 24) + '...';
                     }
                     const item = document.createElement('div');
                     item.className = 'sidebar-history-item p-2 mb-2 bg-gray-800 rounded text-gray-200 text-sm truncate cursor-pointer hover:bg-gray-700 transition flex items-center justify-between';
@@ -859,3 +857,4 @@
                 if (starfieldToggle) starfieldToggle.checked = isStarfieldEnabled;
             });
         }
+          
