@@ -111,6 +111,8 @@ Stay concise, friendly, and always answer as Cosmic AI.
     // --- Firebase Firestore for user search history ---
     let currentUser = null;
     let userSearchHistory = [];
+    let userDisplayName = null;
+    let userPhotoURL = null;
 
     // Firestore setup (assumes firebase/app and firebase/firestore are loaded globally)
     let db;
@@ -122,16 +124,19 @@ Stay concise, friendly, and always answer as Cosmic AI.
         firebase.auth().onAuthStateChanged(function(user) {
             currentUser = user;
             if (user) {
+                userDisplayName = user.displayName || user.uid;
+                userPhotoURL = user.photoURL || null;
                 loadUserSearchHistory();
             }
         });
     }
 
-    // Load search history from Firestore
+    // Load search history from Firestore using displayName as doc ID
     async function loadUserSearchHistory() {
         if (!db || !currentUser) return;
+        const docId = userDisplayName || currentUser.uid;
         try {
-            const doc = await db.collection("users").doc(currentUser.uid).get();
+            const doc = await db.collection("users").doc(docId).get();
             userSearchHistory = (doc.exists && doc.data().searchHistory) ? doc.data().searchHistory : [];
             // Optionally update UI if you have a function for that
             if (typeof populateHistory === "function") populateHistory();
@@ -142,17 +147,22 @@ Stay concise, friendly, and always answer as Cosmic AI.
         }
     }
 
-    // Save search history to Firestore
+    // Save search history to Firestore using displayName as doc ID, and store profile info
     async function saveUserSearchHistory() {
         if (!db || !currentUser) return;
+        const docId = userDisplayName || currentUser.uid;
         try {
-            await db.collection("users").doc(currentUser.uid).set(
-                { searchHistory: userSearchHistory },
+            await db.collection("users").doc(docId).set(
+                {
+                    searchHistory: userSearchHistory,
+                    displayName: userDisplayName,
+                    photoURL: userPhotoURL
+                },
                 { merge: true }
             );
             if (typeof renderSidebarHistory === "function") renderSidebarHistory();
         } catch (e) {
-            console.error("Firestore save error:", e); // <--- Add this line
+            console.error("Firestore save error:", e);
         }
     }
 

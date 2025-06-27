@@ -644,3 +644,47 @@
             'gray-700': '#374151',
             // Add more as needed
         };
+
+        // --- User Profile Display in Sidebar ---
+        function renderUserProfile() {
+            if (!sidebar) return;
+            // Remove existing profile if present
+            let existingProfile = document.getElementById('sidebarUserProfile');
+            if (existingProfile) existingProfile.remove();
+
+            // Use global variables set in main.js
+            const name = window.userDisplayName || '';
+            const photo = window.userPhotoURL || '';
+
+            if (name || photo) {
+                const profileDiv = document.createElement('div');
+                profileDiv.id = 'sidebarUserProfile';
+                profileDiv.className = 'flex flex-col items-center mb-6 w-full';
+                profileDiv.innerHTML = `
+                    <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-accent mb-2 bg-gray-700 flex items-center justify-center">
+                        ${photo ? `<img src="${photo}" alt="${name}" class="w-full h-full object-cover">` : `<span class="text-3xl">${name ? name[0].toUpperCase() : '?'}</span>`}
+                    </div>
+                    <div class="text-sm font-semibold text-gray-200 truncate w-full text-center">${name}</div>
+                `;
+                // Insert at the top of the sidebar (after hamburger/new chat)
+                const topDiv = sidebar.querySelector('div.flex.flex-col.items-center.w-full');
+                if (topDiv) {
+                    topDiv.insertAdjacentElement('afterend', profileDiv);
+                } else {
+                    sidebar.insertBefore(profileDiv, sidebar.firstChild);
+                }
+            }
+        }
+
+        // Listen for user info changes (main.js sets these on login)
+        window.renderUserProfile = renderUserProfile;
+
+        // Optionally, observe changes to userDisplayName/userPhotoURL and re-render
+        const userProfileObserver = new MutationObserver(() => renderUserProfile());
+        userProfileObserver.observe(document.body, { childList: true, subtree: true });
+
+        // Call on DOMContentLoaded and after login
+        document.addEventListener('DOMContentLoaded', () => {
+            // ...existing code...
+            renderUserProfile();
+        });
