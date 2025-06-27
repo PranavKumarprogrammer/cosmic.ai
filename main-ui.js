@@ -285,14 +285,24 @@
         function renderSidebarHistory() {
             if (!sidebarHistoryList) return;
             sidebarHistoryList.innerHTML = '';
-            // Only show when sidebar is expanded and there is history
-            if (!sidebar.classList.contains('collapsed') && typeof userSearchHistory !== "undefined" && userSearchHistory.length) {
-                userSearchHistory.slice().reverse().forEach((query, idx) => {
+            // Only show when sidebar is expanded and user is logged in and there is history
+            const isExpanded = !sidebar.classList.contains('collapsed');
+            const historyArr = (typeof window.userSearchHistory !== "undefined" && window.userSearchHistory.length)
+                ? window.userSearchHistory
+                : [];
+            if (isExpanded && historyArr.length) {
+                historyArr.slice().reverse().forEach((query, idx) => {
+                    // Shorten query to first 6 words + …
+                    let shortQuery = query.trim().split(/\s+/);
+                    if (shortQuery.length > 6) {
+                        shortQuery = shortQuery.slice(0, 6).join(' ') + ' …';
+                    } else {
+                        shortQuery = query;
+                    }
                     const item = document.createElement('div');
                     item.className = 'sidebar-history-item p-2 mb-2 bg-gray-800 rounded text-gray-200 text-sm truncate cursor-pointer hover:bg-gray-700 transition flex items-center justify-between';
                     item.title = query;
-                    item.textContent = query;
-                    // Optional: click to re-query or fill input
+                    item.textContent = shortQuery;
                     item.addEventListener('click', () => {
                         if (searchInput) {
                             searchInput.value = query;
@@ -301,17 +311,15 @@
                             searchInput.setAttribute('placeholder', '');
                         }
                     });
-                    // Optional: add a remove (X) button
                     const removeBtn = document.createElement('button');
                     removeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 hover:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>';
                     removeBtn.className = 'ml-2 p-1 rounded hover:bg-gray-700 transition';
                     removeBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        // Remove from history and update Firestore
-                        const realIdx = userSearchHistory.length - 1 - idx;
-                        userSearchHistory.splice(realIdx, 1);
+                        const realIdx = historyArr.length - 1 - idx;
+                        window.userSearchHistory.splice(realIdx, 1);
                         if (typeof saveUserSearchHistory === "function") saveUserSearchHistory();
-                        renderSidebarHistory();
+                        setTimeout(renderSidebarHistory, 0);
                     });
                     item.appendChild(removeBtn);
                     sidebarHistoryList.appendChild(item);
@@ -323,13 +331,27 @@
         }
         window.renderSidebarHistory = renderSidebarHistory;
 
-        // --- Sidebar expand/collapse logic ---
+        // Sidebar expand/collapse logic
         if (toggleViewButton && sidebar) {
             toggleViewButton.addEventListener('click', () => {
                 const isCollapsed = sidebar.classList.toggle('collapsed');
                 sidebar.setAttribute('data-collapsed', isCollapsed ? "true" : "false");
-                renderSidebarHistory();
+                setTimeout(renderSidebarHistory, 0);
+
+                // Align hamburger to left when expanded, center when collapsed
+                if (!isCollapsed) {
+                    toggleViewButton.style.alignSelf = "flex-start";
+                } else {
+                    toggleViewButton.style.alignSelf = "center";
+                }
             });
+
+            // On load, ensure correct alignment
+            if (!sidebar.classList.contains('collapsed')) {
+                toggleViewButton.style.alignSelf = "flex-start";
+            } else {
+                toggleViewButton.style.alignSelf = "center";
+            }
         }
 
         // --- Fix: Ensure toggleFloatingTitle is defined ---
@@ -403,7 +425,7 @@
             if (telemetryToggle) telemetryToggle.checked = isTelemetryEnabled;
             if (historyToggle) historyToggle.checked = isSearchHistorySaved;
             toggleMainContentMinimization();
-            renderSidebarHistory();
+            setTimeout(renderSidebarHistory, 0);
         });
 
         // Search Input Enter key press
@@ -560,7 +582,7 @@
             telemetryToggle.checked = isTelemetryEnabled;
             historyToggle.checked = isSearchHistorySaved;
             toggleMainContentMinimization(); // Apply initial minimization state (default maximized)
-            renderSidebarHistory();
+            setTimeout(renderSidebarHistory, 0);
         });
 
         // --- Keep typewriter running even after user input ---
