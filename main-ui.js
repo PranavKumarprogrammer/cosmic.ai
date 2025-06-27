@@ -77,6 +77,8 @@
         let aiVerbosity = 'standard';
         let isTelemetryEnabled = false; // Default to false
         let isSearchHistorySaved = true; // Default to true
+        let isStarfieldEnabled = true; // default: enabled
+
         // Remove local searchHistory array, use userSearchHistory from main.js
         // let searchHistory = []; // REMOVE THIS LINE
 
@@ -710,3 +712,150 @@
             // ...existing code...
             renderUserProfile();
         });
+
+        // --- Starfield Animation ---
+        // Only show starfield in the main area, not under the sidebar
+        function startStarfield() {
+            const mainContent = document.getElementById('mainContent');
+            if (!mainContent) return;
+            // Remove any existing starfield
+            let existing = mainContent.querySelector('.stars-bg');
+            if (existing) return;
+
+            const container = document.createElement('div');
+            container.className = 'stars-bg';
+            container.style.position = 'absolute';
+            container.style.top = 0;
+            container.style.left = 0;
+            container.style.width = '100%';
+            container.style.height = '100%';
+            container.style.pointerEvents = 'none';
+            container.style.zIndex = 0;
+            mainContent.style.position = 'relative';
+            mainContent.insertBefore(container, mainContent.firstChild);
+
+            const canvas = document.createElement('canvas');
+            container.appendChild(canvas);
+            let w = mainContent.offsetWidth, h = mainContent.offsetHeight;
+            canvas.width = w;
+            canvas.height = h;
+
+            let ctx = canvas.getContext('2d');
+            let numStars = Math.floor((w * h) / 1800);
+            let stars = [];
+            for (let i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: Math.random() * 1.1 + 0.2,
+                    speed: Math.random() * 0.12 + 0.03,
+                    alpha: Math.random() * 0.5 + 0.5
+                });
+            }
+            let running = true;
+            function animate() {
+                if (!running) return;
+                ctx.clearRect(0, 0, w, h);
+                for (let s of stars) {
+                    ctx.globalAlpha = s.alpha;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI);
+                    ctx.fillStyle = "#fff";
+                    ctx.fill();
+                    s.x += s.speed;
+                    if (s.x > w) s.x = 0;
+                }
+                ctx.globalAlpha = 1;
+                requestAnimationFrame(animate);
+            }
+            animate();
+
+            // Responsive
+            function resize() {
+                w = mainContent.offsetWidth;
+                h = mainContent.offsetHeight;
+                canvas.width = w;
+                canvas.height = h;
+                numStars = Math.floor((w * h) / 1800);
+                if (stars.length < numStars) {
+                    for (let i = stars.length; i < numStars; i++) {
+                        stars.push({
+                            x: Math.random() * w,
+                            y: Math.random() * h,
+                            r: Math.random() * 1.1 + 0.2,
+                            speed: Math.random() * 0.12 + 0.03,
+                            alpha: Math.random() * 0.5 + 0.5
+                        });
+                    }
+                } else if (stars.length > numStars) {
+                    stars.length = numStars;
+                }
+            }
+            window.addEventListener('resize', resize);
+
+            // Store cleanup for stopStarfield
+            container._starfieldCleanup = function() {
+                running = false;
+                window.removeEventListener('resize', resize);
+                container.remove();
+            };
+        }
+
+        function stopStarfield() {
+            const mainContent = document.getElementById('mainContent');
+            if (!mainContent) return;
+            let container = mainContent.querySelector('.stars-bg');
+            if (container && container._starfieldCleanup) {
+                container._starfieldCleanup();
+            }
+        }
+
+        // --- Starfield toggle logic ---
+        function updateStarfield() {
+            if (isStarfieldEnabled) {
+                startStarfield();
+            } else {
+                stopStarfield();
+            }
+        }
+
+        // --- Add toggle to settings modal ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // ...existing code...
+
+            // Add toggle to settings modal if not present
+            let starfieldToggle = document.getElementById('starfield-toggle');
+            if (!starfieldToggle) {
+                // Find a good place in the settings modal (after floating title toggle)
+                const animDiv = document.querySelector('#settingsModal .p-4.bg-gray-800.rounded-lg.border');
+                if (animDiv) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = "flex items-center mt-4";
+                    wrapper.innerHTML = `
+                        <label for="starfield-toggle" class="text-gray-400 mr-3">Animated Starfield Background:</label>
+                        <input type="checkbox" id="starfield-toggle" class="custom-checkbox" ${isStarfieldEnabled ? "checked" : ""}>
+                    `;
+                    animDiv.appendChild(wrapper);
+                }
+            }
+            // Listen for toggle changes
+            starfieldToggle = document.getElementById('starfield-toggle');
+            if (starfieldToggle) {
+                starfieldToggle.checked = isStarfieldEnabled;
+                starfieldToggle.addEventListener('change', (e) => {
+                    isStarfieldEnabled = e.target.checked;
+                    updateStarfield();
+                });
+            }
+
+            // Start starfield if enabled
+            updateStarfield();
+        });
+
+        // Also update starfield when settings modal is opened (to sync toggle)
+        if (settingsButton) {
+            settingsButton.addEventListener('click', () => {
+                const starfieldToggle = document.getElementById('starfield-toggle');
+                if (starfieldToggle) starfieldToggle.checked = isStarfieldEnabled;
+            });
+        }

@@ -152,6 +152,14 @@ body {
     overflow-y: auto;
     width: 98vw;
     max-width: 80rem;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    margin-left: 0;
+    margin-right: 0;
+    z-index: 10;
     /* The rest is already set by Tailwind classes and inline styles */
 }
 
@@ -261,4 +269,80 @@ body {
     border-right: 2px solid #1e3a8a;
 }
 */
+
+/* Starfield background animation */
+.stars-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+.stars-bg canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 0;
+}
+.stars-bg.paused {
+    display: none !important;
+}
+
+/* Chat bubbles (Gemini style) */
+.chat-bubble {
+    display: inline-block;
+    max-width: 80%;
+    padding: 0.75rem 1.1rem;
+    border-radius: 1.25rem;
+    margin-bottom: 0.25rem;
+    word-break: break-word;
+    font-size: 1rem;
+    position: relative;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+    transition: background 0.2s;
+    /* Center bubbles in their flex wrapper */
+    margin-left: 0;
+    margin-right: 0;
+}
+.chat-bubble-user {
+    background: linear-gradient(90deg, #7c3aed 60%, #312e81 100%);
+    color: #fff;
+    border-bottom-right-radius: 0.3rem;
+    margin-left: auto;
+    margin-right: 0;
+    text-align: right;
+}
+.chat-bubble-ai {
+    background: linear-gradient(90deg, #23263a 60%, #1e293b 100%);
+    color: #e0e7ff;
+    border-bottom-left-radius: 0.3rem;
+    margin-right: auto;
+    margin-left: 0;
+    text-align: left;
+}
+
+/* Center the chat bubble wrapper flex container */
+.chat-bubble-wrapper {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+.chat-bubble-wrapper.user {
+    justify-content: flex-end;
+}
+.chat-bubble-wrapper.ai {
+    justify-content: flex-start;
+}
+
+/* Chat fade-out effect at the bottom */
+#chatMessages {
+    mask-image: linear-gradient(to bottom, #000 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 90%, transparent 100%);
+    /* The fade will hide the bottom part as it approaches the search bar */
+    /* You may adjust 90% to 85% for a stronger fade */
+}
 

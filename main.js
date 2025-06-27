@@ -23,17 +23,25 @@ Stay concise, friendly, and always answer as Cosmic AI.
     if (!chatForm || !chatInput || !chatMessages) return;
 
     function appendChatMessage(sender, text, type, isPlaceholder) {
-        const msgDiv = document.createElement("div");
-        msgDiv.className = type === "user" ? "mb-2 text-right" : "mb-2 text-left";
-        msgDiv.innerHTML = `<span class="font-bold ${type === "user" ? 'text-[#FF5733]' : 'text-gray-300'}">${sender}:</span> <span>${escapeHTML(text)}</span>`;
+        // Create a wrapper for alignment and centering
+        const wrapper = document.createElement("div");
+        wrapper.className = "chat-bubble-wrapper " + (type === "user" ? "user" : "ai");
+
+        // Bubble
+        const bubble = document.createElement("div");
+        bubble.className = "chat-bubble " + (type === "user" ? "chat-bubble-user" : "chat-bubble-ai");
+        bubble.innerHTML = `<span>${escapeHTML(text)}</span>`;
         if (isPlaceholder) {
-            msgDiv.classList.add("italic");
-            msgDiv.innerHTML += ' <span class="loader"></span>';
+            bubble.classList.add("italic");
+            bubble.innerHTML += ' <span class="loader"></span>';
         }
-        chatMessages.appendChild(msgDiv);
-        //! Always scroll to bottom
+
+        wrapper.appendChild(bubble);
+        chatMessages.appendChild(wrapper);
+
+        // Always scroll to bottom
         chatMessages.scrollTop = chatMessages.scrollHeight;
-        return msgDiv;
+        return bubble;
     }
 
     function escapeHTML(str) {
