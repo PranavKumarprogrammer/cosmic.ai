@@ -108,6 +108,7 @@
         const closeHistoryModalButton = document.getElementById('closeHistoryModal');
         const historyList = document.getElementById('historyList');
         const noHistoryMessage = document.getElementById('noHistoryMessage');
+        const sidebar = document.getElementById('sidebar');
 
 
         // --- Functions to Update UI ---
@@ -228,7 +229,10 @@
                         return;
                     }
                 }
-                searchInput.setAttribute('placeholder', currentText + (blinkState ? '|' : ' '));
+                // Only set placeholder if input is empty and not focused
+                if (!searchInput.value && document.activeElement !== searchInput) {
+                    searchInput.setAttribute('placeholder', currentText + (blinkState ? '|' : ' '));
+                }
                 typingInterval = setTimeout(type, 70);
             }
 
@@ -236,7 +240,8 @@
             function blinkCursor() {
                 blinkState = !blinkState;
                 // Only update if not typing/deleting (at end or start)
-                if (charIdx === placeholders[placeholderIdx].length || charIdx === 0) {
+                if ((!searchInput.value && document.activeElement !== searchInput) &&
+                    (charIdx === placeholders[placeholderIdx].length || charIdx === 0)) {
                     searchInput.setAttribute('placeholder', currentText + (blinkState ? '|' : ' '));
                 }
                 setTimeout(blinkCursor, 500);
@@ -384,8 +389,9 @@
 
         // Toggle View Button click
         toggleViewButton.addEventListener('click', () => {
-            isMainContentMinimized = !isMainContentMinimized;
-            toggleMainContentMinimization();
+            if (!sidebar) return;
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            sidebar.setAttribute('data-collapsed', isCollapsed ? "true" : "false");
         });
 
 
@@ -488,18 +494,25 @@
             toggleMainContentMinimization(); // Apply initial minimization state (default maximized)
         });
 
-        // A simple mapping for Tailwind colors to hex for dynamic CSS variables
-        // In a real project, you'd load Tailwind's config or use a more robust solution.
-        const TailwindColors = {
-            'orange-500': '#f97316',
-            'blue-500': '#3b82f6',
-            'purple-500': '#a855f7',
-            'red-500': '#ef4444',
-            'yellow-600': '#eab308',
-            'gray-600': '#4b5563',
-            'gray-700': '#374151',
-            // Add other colors as needed for dynamic styling
-        };
+        // --- Keep typewriter running even after user input ---
+        searchInput.addEventListener('input', () => {
+            // If input is cleared and not focused, restart typewriter effect
+            if (!searchInput.value && document.activeElement !== searchInput) {
+                startTypingEffect();
+            }
+        });
+        searchInput.addEventListener('focus', () => {
+            // Remove placeholder while typing
+            searchInput.setAttribute('placeholder', '');
+        });
+        searchInput.addEventListener('blur', () => {
+            // Restart typewriter effect when input loses focus and is empty
+            if (!searchInput.value) {
+                startTypingEffect();
+            }
+        });
+
+
 
         // --- Typewriter effect for AI replies ---
         /**

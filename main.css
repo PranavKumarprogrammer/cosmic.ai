@@ -146,3 +146,60 @@ body {
     padding-bottom: 10%;
 }
 
+/* Ensure chatMessages is above the chat form and scrollable */
+#chatMessages {
+    /* Already set in HTML, but you can reinforce here if needed */
+    /* position: fixed; */
+    /* left: 50%; */
+    /* transform: translateX(-50%); */
+    /* bottom: 96px; 24px above the chat form */
+    /* width: 100%; */
+    /* max-width: 36rem; */
+    /* background: rgba(17,24,39,0.95); */
+    /* border-radius: 1rem; */
+    /* box-shadow: 0 4px 32px rgba(0,0,0,0.3); */
+    /* padding: 1rem; */
+    /* z-index: 30; */
+    max-height: none;
+    overflow-y: visible;
+}
+
+/* Sidebar styles */
+.sidebar {
+    transition: width 0.3s cubic-bezier(0.4,0,0.2,1), min-width 0.3s cubic-bezier(0.4,0,0.2,1), padding 0.3s;
+    width: 18rem; /* 72 (lg:w-72) */
+    min-width: 6rem;
+}
+.sidebar.collapsed {
+    width: 4.5rem !important; /* 18 (w-18) */
+    min-width: 4.5rem !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+}
+.sidebar.collapsed .sidebar-label-text {
+    display: none !important;
+}
+.sidebar .sidebar-label-text {
+    display: inline !important;
+}
+.sidebar.collapsed .sidebar-logo {
+    margin-bottom: 0.5rem !important;
+    padding: 0.5rem !important;
+    transition: all 0.3s;
+}
+.sidebar.collapsed .sidebar-divider {
+    opacity: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    transition: all 0.3s;
+}
+
+/* Optional: Sidebar custom shadow and gradient (if not using Tailwind for this) */
+/*
+#sidebar {
+    background: linear-gradient(to bottom, #1a202c 0%, #0d0d1a 100%);
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.35);
+    border-right: 2px solid #1e3a8a;
+}
+*/
+

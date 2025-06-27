@@ -12,14 +12,8 @@ About Cosmic AI:
 Cosmic AI is a next-generation assistant designed to help users explore powerful AI tools, automation features, and smart integrations.
 It is fast, helpful, creative, and tailored to guide users through everything related to modern AI products.
 
-AI Tools List:
-- ChatWizard: A chatbot builder for websites
-- AutoPostAI: Automatically posts to social media
-- DataBuddy: Helps with spreadsheet data analysis
-
 Stay concise, friendly, and always answer as Cosmic AI.
 `;
-    // !AI tools and technology and mainly about - text removed from prompt, not related to the things below this line
     // Use correct input and form IDs
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("searchInput"); // Fix: use searchInput
@@ -37,6 +31,7 @@ Stay concise, friendly, and always answer as Cosmic AI.
             msgDiv.innerHTML += ' <span class="loader"></span>';
         }
         chatMessages.appendChild(msgDiv);
+        //! Always scroll to bottom
         chatMessages.scrollTop = chatMessages.scrollHeight;
         return msgDiv;
     }
@@ -153,6 +148,8 @@ Stay concise, friendly, and always answer as Cosmic AI.
                 { searchHistory: userSearchHistory },
                 { merge: true }
             );
+            // Notify UI to update sidebar history if needed
+            if (typeof renderSidebarHistory === "function") renderSidebarHistory();
         } catch (e) {
             // Optionally handle error
         }
@@ -165,6 +162,11 @@ Stay concise, friendly, and always answer as Cosmic AI.
         const msg = chatInput.value.trim();
         if (!msg) return;
 
+        // Show chatMessages container on first message
+        if (chatMessages.classList.contains("hidden")) {
+            chatMessages.classList.remove("hidden");
+        }
+
         // Save to user search history if enabled and logged in
         if (typeof isSearchHistorySaved === "undefined" || isSearchHistorySaved) {
             if (currentUser) {
@@ -172,6 +174,8 @@ Stay concise, friendly, and always answer as Cosmic AI.
                 // Keep only the latest 50 entries (optional)
                 if (userSearchHistory.length > 50) userSearchHistory = userSearchHistory.slice(-50);
                 saveUserSearchHistory();
+                // Optionally update sidebar history immediately
+                if (typeof renderSidebarHistory === "function") renderSidebarHistory();
             }
         }
 
