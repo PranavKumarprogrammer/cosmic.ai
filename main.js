@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     // --- Login check removed, now handled in auth-check.js ---
 
-    const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" + GEMINI_API_KEY;
+    const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY;
 
     // Add system prompt
     const systemPrompt = `
