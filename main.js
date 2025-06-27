@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const GEMINI_API_KEY = "AIzaSyD0Bh8pwS6Q4fxi80cWlWgGuv2B5U-Q9nE";
+    // --- Login check removed, now handled in auth-check.js ---
+
     const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" + GEMINI_API_KEY;
 
     // Add system prompt
@@ -112,12 +113,67 @@ Stay concise, friendly, and always answer as Cosmic AI.
     window.getLeapAIImage = getLeapAIImage;
     // --- End Leap AI image generation via backend ---
 
+    // --- Firebase Firestore for user search history ---
+    let currentUser = null;
+    let userSearchHistory = [];
+
+    // Firestore setup (assumes firebase/app and firebase/firestore are loaded globally)
+    let db;
+    if (typeof firebase !== "undefined" && typeof firebaseConfig !== "undefined") {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        db = firebase.firestore();
+        firebase.auth().onAuthStateChanged(function(user) {
+            currentUser = user;
+            if (user) {
+                loadUserSearchHistory();
+            }
+        });
+    }
+
+    // Load search history from Firestore
+    async function loadUserSearchHistory() {
+        if (!db || !currentUser) return;
+        try {
+            const doc = await db.collection("users").doc(currentUser.uid).get();
+            userSearchHistory = (doc.exists && doc.data().searchHistory) ? doc.data().searchHistory : [];
+            // Optionally update UI if you have a function for that
+            if (typeof populateHistory === "function") populateHistory();
+        } catch (e) {
+            userSearchHistory = [];
+        }
+    }
+
+    // Save search history to Firestore
+    async function saveUserSearchHistory() {
+        if (!db || !currentUser) return;
+        try {
+            await db.collection("users").doc(currentUser.uid).set(
+                { searchHistory: userSearchHistory },
+                { merge: true }
+            );
+        } catch (e) {
+            // Optionally handle error
+        }
+    }
+
     let chatFormDocked = false;
 
     chatForm.addEventListener("submit", async function (e) {
         e.preventDefault();
         const msg = chatInput.value.trim();
         if (!msg) return;
+
+        // Save to user search history if enabled and logged in
+        if (typeof isSearchHistorySaved === "undefined" || isSearchHistorySaved) {
+            if (currentUser) {
+                userSearchHistory.push(msg);
+                // Keep only the latest 50 entries (optional)
+                if (userSearchHistory.length > 50) userSearchHistory = userSearchHistory.slice(-50);
+                saveUserSearchHistory();
+            }
+        }
 
         // Animate chat form from its original position to the bottom smoothly and keep it perfectly centered
         if (!chatFormDocked) {
@@ -219,5 +275,15 @@ Stay concise, friendly, and always answer as Cosmic AI.
             botMsgDiv.innerHTML = `<span class="font-bold text-gray-300">Cosmic AI:</span> <span>${errMsg}</span>`;
         }
     });
-});
 
+    // If you have a function to populate history in the UI, update it to use userSearchHistory
+    // Example:
+    function populateHistory() {
+        // ...existing code...
+        const historyArr = (typeof userSearchHistory !== "undefined" && userSearchHistory.length)
+            ? userSearchHistory
+            : [];
+        // Use historyArr instead of searchHistory
+        // ...existing code...
+    }
+});

@@ -1,252 +1,489 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cosmic AI</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="main.css">
-</head>
-<body class="flex h-screen bg-gray-950 text-white galaxy-background">
-
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="main.css" />
+  </head>
+  <body class="flex h-screen bg-gray-950 text-white galaxy-background">
     <!-- Sidebar -->
-    <aside id="sidebar" class="w-20 sm:w-20 md:w-24 lg:w-64 flex flex-col items-center justify-between py-6 px-2 bg-gray-900 border-r border-gray-800 shadow-xl">
-        <div class="flex flex-col items-center space-y-8 w-full">
-            <!-- Logo -->
-            <div id="logo" class="mb-8 p-2 rounded-full flex items-center justify-center text-orange-400">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L1 12H5V22H19V12H23L12 2ZM12 4.8L20.4 12H18V20H6V12H3.6L12 4.8ZM12 9C10.3431 9 9 10.3431 9 12H15C15 10.3431 13.6569 9 12 9Z" fill="currentColor"/>
-                </svg>
-            </div>
-
-            <!-- Toggle View Button (Moved here) -->
-            <button id="toggleViewButton" class="flex items-center justify-center w-12 h-12 bg-gray-800 hover:bg-gray-700 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-
-            <!-- New Chat Button -->
-            <button id="newChatButton" class="flex items-center justify-center w-12 h-12 bg-orange-700 hover:bg-orange-600 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-75">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-            </button>
-
-            <!-- History Button -->
-            <button id="historyButton" class="flex items-center justify-center w-12 h-12 bg-gray-800 hover:bg-gray-700 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </button>
+    <aside
+      id="sidebar"
+      class="w-20 sm:w-20 md:w-24 lg:w-64 flex flex-col items-center justify-between py-6 px-2 bg-gray-900 border-r border-gray-800 shadow-xl"
+    >
+      <div class="flex flex-col items-center space-y-8 w-full">
+        <!-- Logo -->
+        <div
+          id="logo"
+          class="mb-8 p-2 rounded-full flex items-center justify-center text-orange-400"
+        >
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 2L1 12H5V22H19V12H23L12 2ZM12 4.8L20.4 12H18V20H6V12H3.6L12 4.8ZM12 9C10.3431 9 9 10.3431 9 12H15C15 10.3431 13.6569 9 12 9Z"
+              fill="currentColor"
+            />
+          </svg>
         </div>
 
-        <div class="flex flex-col items-center w-full space-y-3">
-            <!-- Settings Button -->
-            <button id="settingsButton" class="flex items-center justify-center w-full py-2.5 px-4 bg-gray-800 hover:bg-gray-700 rounded-xl text-sm md:text-base transition-colors duration-200 shadow-md">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.515-1.332 1.944-2.181 3.475-2.181 1.531 0 2.96.849 3.475 2.181.42.923.474 1.966.155 2.871-.318.905-.823 1.63-1.488 2.136-.665.506-1.464.84-2.313 1.056-.849.215-1.744.215-2.593 0-.849-.216-1.648-.55-2.313-1.056-.665-.506-1.169-1.231-1.488-2.136-.319-.905-.264-1.948.155-2.871zM12 18c-3.313 0-6 2.687-6 6h12c0-3.313-2.687-6-6-6z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21.75l-1.616-1.616A8.25 8.25 0 1112 3.75a8.25 8.25 0 011.616 1.616L12 21.75zM12 15a3 3 0 100-6 3 3 0 000 6z" />
-                </svg>
-                <span class="hidden lg:inline">Settings</span>
-            </button>
+        <!-- Toggle View Button (Moved here) -->
+        <button
+          id="toggleViewButton"
+          class="flex items-center justify-center w-12 h-12 bg-gray-800 hover:bg-gray-700 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w-7"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
 
-            <!-- Exit Button -->
-            <button id="exitButton" class="flex items-center justify-center w-full py-2.5 px-4 bg-red-700 hover:bg-red-600 rounded-xl text-sm md:text-base transition-colors duration-200 shadow-md">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                <span class="hidden lg:inline">Exit</span>
-            </button>
-        </div>
+        <!-- New Chat Button -->
+        <button
+          id="newChatButton"
+          class="flex items-center justify-center w-12 h-12 bg-orange-700 hover:bg-orange-600 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-75"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w-7"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            />
+          </svg>
+        </button>
+
+        <!-- History Button -->
+        <button
+          id="historyButton"
+          class="flex items-center justify-center w-12 h-12 bg-gray-800 hover:bg-gray-700 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w-7"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="flex flex-col items-center w-full space-y-3">
+        <!-- Settings Button -->
+        <button
+          id="settingsButton"
+          class="flex items-center justify-center w-full py-2.5 px-4 bg-gray-800 hover:bg-gray-700 rounded-xl text-sm md:text-base transition-colors duration-200 shadow-md"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M10.325 4.317c.515-1.332 1.944-2.181 3.475-2.181 1.531 0 2.96.849 3.475 2.181.42.923.474 1.966.155 2.871-.318.905-.823 1.63-1.488 2.136-.665.506-1.464.84-2.313 1.056-.849.215-1.744.215-2.593 0-.849-.216-1.648-.55-2.313-1.056-.665-.506-1.169-1.231-1.488-2.136-.319-.905-.264-1.948.155-2.871zM12 18c-3.313 0-6 2.687-6 6h12c0-3.313-2.687-6-6-6z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 21.75l-1.616-1.616A8.25 8.25 0 1112 3.75a8.25 8.25 0 011.616 1.616L12 21.75zM12 15a3 3 0 100-6 3 3 0 000 6z"
+            />
+          </svg>
+          <span class="hidden lg:inline">Settings</span>
+        </button>
+
+        <!-- Exit Button -->
+        <button
+          id="exitButton"
+          class="flex items-center justify-center w-full py-2.5 px-4 bg-red-700 hover:bg-red-600 rounded-xl text-sm md:text-base transition-colors duration-200 shadow-md"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          <span class="hidden lg:inline">Exit</span>
+        </button>
+      </div>
     </aside>
 
     <!-- Main Content -->
-    <main id="mainContent" class="flex-1 flex flex-col items-center pt-20 px-4 md:px-8 lg:px-16 overflow-auto bg-gradient-to-br from-black via-blue-950 to-black main-content-maximized">
-        <!-- Cosmic AI Title -->
-        <h1 id="cosmicAITitle" class="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-10 md:mb-16 text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-blue-700 tracking-tight drop-shadow-lg animate-float">
-            Cosmic AI
-        </h1>
+    <main
+      id="mainContent"
+      class="flex-1 flex flex-col items-center pt-20 px-4 md:px-8 lg:px-16 overflow-auto bg-gradient-to-br from-black via-blue-950 to-black main-content-maximized"
+    >
+      <!-- Cosmic AI Title -->
+      <h1
+        id="cosmicAITitle"
+        class="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-10 md:mb-16 text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-blue-700 tracking-tight drop-shadow-lg animate-float"
+      >
+        Cosmic AI
+      </h1>
 
-        <!-- Wrap your search bar in a form for chat submit -->
-        <form id="chatForm" class="w-full max-w-xl md:max-w-2xl" style="transition:all 0.6s cubic-bezier(0.4,0,0.2,1);">
-            <!-- Search Bar -->
-            <div id="searchBar" class="bg-gray-800 rounded-full flex items-center px-6 py-3 shadow-2xl border border-blue-800 hover:border-orange-500 transition-all duration-300">
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder=""
-                    class="flex-1 bg-transparent border-none outline-none text-white text-lg md:text-xl placeholder-gray-500"
-                    autocomplete="off"
-                />
-                <!-- Only one send button, with a send icon -->
-                <button id="sendButton" type="submit" class="bg-orange-600 hover:bg-orange-700 rounded-full p-2 ml-4 transition-colors duration-200 shadow-md flex items-center justify-center">
-                    <!-- Send icon (paper plane) -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12l14-7-7 14-2-5-5-2z" />
-                    </svg>
-                </button>
-            </div>
-        </form>
-        <div id="chatMessages" class="w-full max-w-xl mx-auto mt-6 mb-2" style="transition:margin-bottom 0.6s cubic-bezier(0.4,0,0.2,1);"></div>
-
-        <!-- Message display -->
-        <div id="messageDisplay" class="mt-6 p-4 bg-gray-800 text-blue-200 rounded-xl shadow-lg max-w-lg text-center border border-gray-700 transition-colors duration-300 hidden">
-            <!-- Message will be inserted here -->
+      <!-- Wrap your search bar in a form for chat submit -->
+      <form
+        id="chatForm"
+        class="w-full max-w-xl md:max-w-2xl"
+        style="transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1)"
+      >
+        <!-- Search Bar -->
+        <div
+          id="searchBar"
+          class="bg-gray-800 rounded-full flex items-center px-6 py-3 shadow-2xl border border-blue-800 hover:border-orange-500 transition-all duration-300"
+        >
+          <input
+            type="text"
+            id="searchInput"
+            placeholder=""
+            class="flex-1 bg-transparent border-none outline-none text-white text-lg md:text-xl placeholder-gray-500"
+            autocomplete="off"
+          />
+          <!-- Only one send button, with a send icon -->
+          <button
+            id="sendButton"
+            type="submit"
+            class="bg-orange-600 hover:bg-orange-700 rounded-full p-2 ml-4 transition-colors duration-200 shadow-md flex items-center justify-center"
+          >
+            <!-- Send icon (paper plane) -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M5 12l14-7-7 14-2-5-5-2z"
+              />
+            </svg>
+          </button>
         </div>
+      </form>
+      <div
+        id="chatMessages"
+        class="w-full max-w-xl mx-auto mt-6 mb-2"
+        style="transition: margin-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1)"
+      ></div>
+
+      <!-- Message display -->
+      <div
+        id="messageDisplay"
+        class="mt-6 p-4 bg-gray-800 text-blue-200 rounded-xl shadow-lg max-w-lg text-center border border-gray-700 transition-colors duration-300 hidden"
+      >
+        <!-- Message will be inserted here -->
+      </div>
     </main>
 
     <!-- Settings Modal -->
-    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 transition-opacity duration-300 ease-out hidden" style="backdrop-filter: blur(5px);">
-        <div id="settingsModalContent" class="bg-gray-900 p-8 rounded-3xl shadow-2xl max-w-lg w-full border border-gray-700 relative transform scale-95 transition-all duration-300 ease-out" style="background-image: linear-gradient(to bottom right, #1a202c, #2d3748);">
-            <h2 class="text-3xl font-bold text-center mb-6 text-orange-400">Cosmic AI Settings</h2>
+    <div
+      id="settingsModal"
+      class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 transition-opacity duration-300 ease-out hidden"
+      style="backdrop-filter: blur(5px)"
+    >
+      <div
+        id="settingsModalContent"
+        class="bg-gray-900 p-8 rounded-3xl shadow-2xl max-w-lg w-full border border-gray-700 relative transform scale-95 transition-all duration-300 ease-out"
+        style="
+          background-image: linear-gradient(to bottom right, #1a202c, #2d3748);
+        "
+      >
+        <h2 class="text-3xl font-bold text-center mb-6 text-orange-400">
+          Cosmic AI Settings
+        </h2>
 
-            <!-- Close button -->
-            <button id="closeSettingsModal" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-full p-2 transform hover:scale-110 active:scale-95">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
+        <!-- Close button -->
+        <button
+          id="closeSettingsModal"
+          class="absolute top-4 right-4 text-gray-400 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-full p-2 transform hover:scale-110 active:scale-95"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
 
-            <!-- Scrollable content area for settings -->
-            <div class="space-y-6 text-gray-300 overflow-y-auto max-h-[calc(80vh-120px)] pr-2 custom-scrollbar">
-                <!-- Theme Selector -->
-                <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200">
-                    <h3 class="text-xl font-semibold mb-3">Appearance</h3>
-                    <label for="theme-select" class="block text-gray-400 mb-2">Cosmic Theme:</label>
-                    <select id="theme-select" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200">
-                        <option value="nebula-flare">Nebula Flare (Orange/Blue)</option>
-                        <option value="deep-nebula">Deep Nebula (Blue/Purple)</option>
-                        <option value="crimson-cosmos">Crimson Cosmos (Red/Gold)</option>
-                    </select>
-                </div>
+        <!-- Scrollable content area for settings -->
+        <div
+          class="space-y-6 text-gray-300 overflow-y-auto max-h-[calc(80vh-120px)] pr-2 custom-scrollbar"
+        >
+          <!-- Theme Selector -->
+          <div
+            class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200"
+          >
+            <h3 class="text-xl font-semibold mb-3">Appearance</h3>
+            <label for="theme-select" class="block text-gray-400 mb-2"
+              >Cosmic Theme:</label
+            >
+            <select
+              id="theme-select"
+              class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200"
+            >
+              <option value="nebula-flare">Nebula Flare (Orange/Blue)</option>
+              <option value="deep-nebula">Deep Nebula (Blue/Purple)</option>
+              <option value="crimson-cosmos">Crimson Cosmos (Red/Gold)</option>
+            </select>
+          </div>
 
-                <!-- AI Behavior Settings -->
-                <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200">
-                    <h3 class="text-xl font-semibold mb-3">AI Behavior</h3>
-                    <div>
-                        <label for="ai-verbosity" class="block text-gray-400 mb-2">AI Response Verbosity:</label>
-                        <select id="ai-verbosity" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200">
-                            <option value="terse">Terse</option>
-                            <option value="standard">Standard</option>
-                            <option value="verbose">Verbose</option>
-                        </select>
-                    </div>
-                    <div class="mt-4">
-                        <label for="typing-speed" class="block text-gray-400 mb-2">Search Bar Typing Speed:</label>
-                        <input
-                            type="range"
-                            id="typing-speed"
-                            min="50"
-                            max="300"
-                            step="10"
-                            value="150"
-                            class="w-full h-2 rounded-lg appearance-none cursor-pointer range-slider focus:outline-none focus:ring-2"
-                        />
-                        <span id="currentSpeed" class="text-sm text-gray-400">Current Speed: 150ms/char (Lower is Faster)</span>
-                    </div>
-                </div>
-
-                <!-- Animation Settings -->
-                <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner flex items-center justify-between hover:border-gray-600 transition-colors duration-200">
-                    <h3 class="text-xl font-semibold">Animations</h3>
-                    <div class="flex items-center">
-                        <label for="floating-title-toggle" class="text-gray-400 mr-3">Floating Title Effect:</label>
-                        <input
-                            type="checkbox"
-                            id="floating-title-toggle"
-                            checked
-                            class="custom-checkbox"
-                        />
-                    </div>
-                </div>
-
-                <!-- Data Preferences -->
-                <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200">
-                    <h3 class="text-xl font-semibold mb-3">Data Preferences</h3>
-                    <p class="text-gray-400 mb-2">Configure data usage and privacy settings.</p>
-                    <div class="flex items-center mt-3">
-                        <input
-                            type="checkbox"
-                            id="telemetry-toggle"
-                            class="custom-checkbox"
-                        />
-                        <label for="telemetry-toggle" class="ml-2 text-gray-300">Enable Telemetry Data</label>
-                    </div>
-                    <div class="flex items-center mt-2">
-                        <input
-                            type="checkbox"
-                            id="history-toggle"
-                            checked
-                            class="custom-checkbox"
-                        />
-                        <label for="history-toggle" class="ml-2 text-gray-300">Save Search History</label>
-                    </div>
-                </div>
-
-                <!-- Notifications Settings -->
-                <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200">
-                    <h3 class="text-xl font-semibold mb-3">Notifications</h3>
-                    <p class="text-gray-400 mb-2">Manage how Cosmic AI notifies you.</p>
-                    <div class="flex items-center mt-3">
-                        <input
-                            type="checkbox"
-                            id="email-notif-toggle"
-                            class="custom-checkbox"
-                        />
-                        <label for="email-notif-toggle" class="ml-2 text-gray-300">Email Notifications</label>
-                    </div>
-                    <div class="flex items-center mt-2">
-                        <input
-                            type="checkbox"
-                            id="inapp-notif-toggle"
-                            class="custom-checkbox"
-                        />
-                        <label for="inapp-notif-toggle" class="ml-2 text-gray-300">In-App Alerts</label>
-                    </div>
-                </div>
-
-                <!-- Account Management -->
-                <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200">
-                    <h3 class="text-xl font-semibold mb-3">Account Management</h3>
-                    <p class="text-gray-400 mb-2">Manage your Cosmic AI account details.</p>
-                    <button class="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded-lg mt-3 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 transform hover:scale-105 active:scale-95">
-                        Manage Profile
-                    </button>
-                    <button class="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded-lg mt-3 ml-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 transform hover:scale-105 active:scale-95">
-                        Change Password
-                    </button>
-                </div>
-
-                <p class="text-sm text-gray-500 mt-6 text-center pb-4">More advanced settings and features are being developed in the Cosmic AI laboratory!</p>
+          <!-- AI Behavior Settings -->
+          <div
+            class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200"
+          >
+            <h3 class="text-xl font-semibold mb-3">AI Behavior</h3>
+            <div>
+              <label for="ai-verbosity" class="block text-gray-400 mb-2"
+                >AI Response Verbosity:</label
+              >
+              <select
+                id="ai-verbosity"
+                class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200"
+              >
+                <option value="terse">Terse</option>
+                <option value="standard">Standard</option>
+                <option value="verbose">Verbose</option>
+              </select>
             </div>
+            <div class="mt-4">
+              <label for="typing-speed" class="block text-gray-400 mb-2"
+                >Search Bar Typing Speed:</label
+              >
+              <input
+                type="range"
+                id="typing-speed"
+                min="50"
+                max="300"
+                step="10"
+                value="150"
+                class="w-full h-2 rounded-lg appearance-none cursor-pointer range-slider focus:outline-none focus:ring-2"
+              />
+              <span id="currentSpeed" class="text-sm text-gray-400"
+                >Current Speed: 150ms/char (Lower is Faster)</span
+              >
+            </div>
+          </div>
+
+          <!-- Animation Settings -->
+          <div
+            class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner flex items-center justify-between hover:border-gray-600 transition-colors duration-200"
+          >
+            <h3 class="text-xl font-semibold">Animations</h3>
+            <div class="flex items-center">
+              <label for="floating-title-toggle" class="text-gray-400 mr-3"
+                >Floating Title Effect:</label
+              >
+              <input
+                type="checkbox"
+                id="floating-title-toggle"
+                checked
+                class="custom-checkbox"
+              />
+            </div>
+          </div>
+
+          <!-- Data Preferences -->
+          <div
+            class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200"
+          >
+            <h3 class="text-xl font-semibold mb-3">Data Preferences</h3>
+            <p class="text-gray-400 mb-2">
+              Configure data usage and privacy settings.
+            </p>
+            <div class="flex items-center mt-3">
+              <input
+                type="checkbox"
+                id="telemetry-toggle"
+                class="custom-checkbox"
+              />
+              <label for="telemetry-toggle" class="ml-2 text-gray-300"
+                >Enable Telemetry Data</label
+              >
+            </div>
+            <div class="flex items-center mt-2">
+              <input
+                type="checkbox"
+                id="history-toggle"
+                checked
+                class="custom-checkbox"
+              />
+              <label for="history-toggle" class="ml-2 text-gray-300"
+                >Save Search History</label
+              >
+            </div>
+          </div>
+
+          <!-- Notifications Settings -->
+          <div
+            class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200"
+          >
+            <h3 class="text-xl font-semibold mb-3">Notifications</h3>
+            <p class="text-gray-400 mb-2">Manage how Cosmic AI notifies you.</p>
+            <div class="flex items-center mt-3">
+              <input
+                type="checkbox"
+                id="email-notif-toggle"
+                class="custom-checkbox"
+              />
+              <label for="email-notif-toggle" class="ml-2 text-gray-300"
+                >Email Notifications</label
+              >
+            </div>
+            <div class="flex items-center mt-2">
+              <input
+                type="checkbox"
+                id="inapp-notif-toggle"
+                class="custom-checkbox"
+              />
+              <label for="inapp-notif-toggle" class="ml-2 text-gray-300"
+                >In-App Alerts</label
+              >
+            </div>
+          </div>
+
+          <!-- Account Management -->
+          <div
+            class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200"
+          >
+            <h3 class="text-xl font-semibold mb-3">Account Management</h3>
+            <p class="text-gray-400 mb-2">
+              Manage your Cosmic AI account details.
+            </p>
+            <button
+              class="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded-lg mt-3 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 transform hover:scale-105 active:scale-95"
+            >
+              Manage Profile
+            </button>
+            <button
+              class="bg-orange-700 hover:bg-orange-600 text-white py-2 px-4 rounded-lg mt-3 ml-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 transform hover:scale-105 active:scale-95"
+            >
+              Change Password
+            </button>
+          </div>
+
+          <p class="text-sm text-gray-500 mt-6 text-center pb-4">
+            More advanced settings and features are being developed in the
+            Cosmic AI laboratory!
+          </p>
         </div>
+      </div>
     </div>
 
     <!-- History Modal -->
-    <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 transition-opacity duration-300 ease-out hidden" style="backdrop-filter: blur(5px);">
-        <div id="historyModalContent" class="bg-gray-900 p-8 rounded-3xl shadow-2xl max-w-lg w-full border border-gray-700 relative transform scale-95 transition-all duration-300 ease-out" style="background-image: linear-gradient(to bottom right, #1a202c, #2d3748);">
-            <h2 class="text-3xl font-bold text-center mb-6 text-orange-400">Search History</h2>
+    <div
+      id="historyModal"
+      class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 transition-opacity duration-300 ease-out hidden"
+      style="backdrop-filter: blur(5px)"
+    >
+      <div
+        id="historyModalContent"
+        class="bg-gray-900 p-8 rounded-3xl shadow-2xl max-w-lg w-full border border-gray-700 relative transform scale-95 transition-all duration-300 ease-out"
+        style="
+          background-image: linear-gradient(to bottom right, #1a202c, #2d3748);
+        "
+      >
+        <h2 class="text-3xl font-bold text-center mb-6 text-orange-400">
+          Search History
+        </h2>
 
-            <!-- Close button -->
-            <button id="closeHistoryModal" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-full p-2 transform hover:scale-110 active:scale-95">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
+        <!-- Close button -->
+        <button
+          id="closeHistoryModal"
+          class="absolute top-4 right-4 text-gray-400 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-full p-2 transform hover:scale-110 active:scale-95"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
 
-            <!-- History List -->
-            <div id="historyList" class="space-y-4 text-gray-300 overflow-y-auto max-h-[calc(80vh-120px)] pr-2 custom-scrollbar">
-                <p class="text-center text-gray-500" id="noHistoryMessage">No search history available yet.</p>
-                <!-- History items will be dynamically added here -->
-            </div>
+        <!-- History List -->
+        <div
+          id="historyList"
+          class="space-y-4 text-gray-300 overflow-y-auto max-h-[calc(80vh-120px)] pr-2 custom-scrollbar"
+        >
+          <p class="text-center text-gray-500" id="noHistoryMessage">
+            No search history available yet.
+          </p>
+          <!-- History items will be dynamically added here -->
         </div>
+      </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <script src="config-file.js"></script>
+    <script src="auth-check.js"></script>
     <script src="main-ui.js"></script>
     <script src="main.js"></script>
-</body>
+  </body>
 </html>

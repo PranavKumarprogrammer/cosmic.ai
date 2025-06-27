@@ -1,56 +1,37 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import {
-    getAuth,
-    signInWithPopup,
-    GoogleAuthProvider,
-    OAuthProvider,
-    GithubAuthProvider,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    fetchSignInMethodsForEmail,
-    linkWithCredential
-} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-
-
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// Initialize Firebase app and auth using global firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const auth = firebase.auth();
 
 //! Providers
-const googleProvider = new GoogleAuthProvider();
-const microsoftProvider = new OAuthProvider('microsoft.com');
-const githubProvider = new GithubAuthProvider();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+const microsoftProvider = new firebase.auth.OAuthProvider('microsoft.com');
+const githubProvider = new firebase.auth.GithubAuthProvider();
 
 //! Function to handle social media login with account linking
 async function handleSocialMediaLogin(provider) {
     try {
-        const result = await signInWithPopup(auth, provider);
+        const result = await auth.signInWithPopup(provider);
         console.log('User logged in:', result.user);
         alert('Login successful!');
         window.location.href = "main.html";
     } catch (error) {
         if (error.code === 'auth/account-exists-with-different-credential') {
-            const email = error.customData.email;
-            let pendingCredential;
-            if (provider instanceof GoogleAuthProvider) {
-                pendingCredential = GoogleAuthProvider.credentialFromError(error);
-            } else if (provider instanceof GithubAuthProvider) {
-                pendingCredential = GithubAuthProvider.credentialFromError(error);
-            } else if (provider instanceof OAuthProvider) {
-                pendingCredential = OAuthProvider.credentialFromError(error);
-            }
+            const email = error.email || (error.customData && error.customData.email);
+            let pendingCredential = error.credential;
             if (provider.providerId === 'github.com') {
                 try {
-                    const methods = await fetchSignInMethodsForEmail(auth, email);
+                    const methods = await auth.fetchSignInMethodsForEmail(email);
                     if (methods.includes('github.com')) {
-                        const githubResult = await signInWithPopup(auth, githubProvider);
+                        const githubResult = await auth.signInWithPopup(githubProvider);
                         alert('GitHub sign in successful!');
                         window.location.href = "main.html";
                     } else {
                         const emailParts = email.split('@');
                         const aliasEmail = `${emailParts[0]}+${provider.providerId}-${Date.now()}@${emailParts[1]}`;
                         const randomPassword = Math.random().toString(36).slice(-8);
-                        const registrationResult = await createUserWithEmailAndPassword(auth, aliasEmail, randomPassword);
+                        const registrationResult = await auth.createUserWithEmailAndPassword(aliasEmail, randomPassword);
                         console.log('Alias account registered:', registrationResult.user);
                         window.location.href = "main.html";
                     }
@@ -63,7 +44,7 @@ async function handleSocialMediaLogin(provider) {
                 const aliasEmail = `${emailParts[0]}+${provider.providerId}-${Date.now()}@${emailParts[1]}`;
                 const randomPassword = Math.random().toString(36).slice(-8); // simple random password
                 try {
-                    const registrationResult = await createUserWithEmailAndPassword(auth, aliasEmail, randomPassword);
+                    const registrationResult = await auth.createUserWithEmailAndPassword(aliasEmail, randomPassword);
                     console.log('Alias account registered:', registrationResult.user);
                     window.location.href = "main.html";
                 } catch (creationError) {
@@ -113,7 +94,7 @@ registerFormElement.addEventListener('submit', async (e) => {
     const password = registerFormElement.querySelector('input[type="password"]').value;
 
     try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         console.log('User registered:', userCredential.user);
         alert('Registration successful! Logging you in...');
         window.location.href = "main.html";
@@ -130,7 +111,7 @@ loginFormElement.addEventListener('submit', async (e) => {
     const password = loginFormElement.querySelector('input[type="password"]').value;
 
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
         console.log('User logged in:', userCredential.user);
         alert('Login successful!');
         window.location.href = "main.html";

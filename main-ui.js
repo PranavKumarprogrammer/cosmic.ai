@@ -77,7 +77,8 @@
         let aiVerbosity = 'standard';
         let isTelemetryEnabled = false; // Default to false
         let isSearchHistorySaved = true; // Default to true
-        let searchHistory = []; // Array to store search history
+        // Remove local searchHistory array, use userSearchHistory from main.js
+        // let searchHistory = []; // REMOVE THIS LINE
 
         // --- DOM Elements ---
         const cosmicAITitle = document.getElementById('cosmicAITitle');
@@ -277,15 +278,19 @@
             }
         }
 
-        // Function to populate history modal
+        // Update populateHistory to use userSearchHistory
         function populateHistory() {
             historyList.innerHTML = ''; // Clear existing history items
 
-            if (searchHistory.length === 0) {
+            const historyArr = (typeof userSearchHistory !== "undefined" && userSearchHistory.length)
+                ? userSearchHistory
+                : [];
+
+            if (historyArr.length === 0) {
                 noHistoryMessage.classList.remove('hidden');
             } else {
                 noHistoryMessage.classList.add('hidden');
-                searchHistory.forEach((query, index) => {
+                historyArr.forEach((query, index) => {
                     const historyItem = document.createElement('div');
                     historyItem.className = 'p-3 bg-gray-800 rounded-md border border-gray-700 flex items-center justify-between';
                     historyItem.innerHTML = `
@@ -303,7 +308,10 @@
                 historyList.querySelectorAll('.clear-history-item').forEach(button => {
                     button.addEventListener('click', (e) => {
                         const index = parseInt(e.currentTarget.dataset.index);
-                        searchHistory.splice(index, 1); // Remove item from array
+                        if (typeof userSearchHistory !== "undefined") {
+                            userSearchHistory.splice(index, 1); // Remove item from array
+                            if (typeof saveUserSearchHistory === "function") saveUserSearchHistory();
+                        }
                         populateHistory(); // Re-render history list
                     });
                 });
