@@ -146,22 +146,36 @@ body {
     padding-bottom: 10%;
 }
 
-/* Ensure chatMessages is above the chat form and scrollable */
+/* Ensure chatMessages is scrollable and styled */
 #chatMessages {
-    /* Already set in HTML, but you can reinforce here if needed */
-    /* position: fixed; */
-    /* left: 50%; */
-    /* transform: translateX(-50%); */
-    /* bottom: 96px; 24px above the chat form */
-    /* width: 100%; */
-    /* max-width: 36rem; */
-    /* background: rgba(17,24,39,0.95); */
-    /* border-radius: 1rem; */
-    /* box-shadow: 0 4px 32px rgba(0,0,0,0.3); */
-    /* padding: 1rem; */
-    /* z-index: 30; */
-    max-height: none;
-    overflow-y: visible;
+    max-height: 75vh;
+    overflow-y: auto;
+    width: 98vw;
+    max-width: 80rem;
+    /* The rest is already set by Tailwind classes and inline styles */
+}
+
+/* Custom scrollbar for dark mode */
+#chatMessages::-webkit-scrollbar {
+    width: 8px;
+}
+#chatMessages::-webkit-scrollbar-track {
+    background: #23263a;
+    border-radius: 10px;
+}
+#chatMessages::-webkit-scrollbar-thumb {
+    background: #3b3f5c;
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+#chatMessages::-webkit-scrollbar-thumb:hover {
+    background: #647087;
+}
+
+/* For Firefox */
+#chatMessages {
+    scrollbar-width: thin;
+    scrollbar-color: #3b3f5c #23263a;
 }
 
 /* Sidebar styles */
