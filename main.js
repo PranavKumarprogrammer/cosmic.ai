@@ -1,81 +1,56 @@
 document.addEventListener("DOMContentLoaded", () => {
     // --- Login check removed, now handled in auth-check.js ---
 
+    // --- Gemini API code commented out ---
+    /*
     const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY;
 
     // Add system prompt
     const systemPrompt = `
-// Your name is **Cosmic AI**, an intelligent assistant built for answering questions about space.
-Do not mention "Gemini" or refer to yourself using any other name or model type. Always act as Cosmic AI.
+    // Your name is **Cosmic AI**, an intelligent assistant built for answering questions about space.
+    Do not mention "Gemini" or refer to yourself using any other name or model type. Always act as Cosmic AI.
 
-About Cosmic AI:
-Cosmic AI is a next-generation assistant designed to help users explore powerful AI tools, automation features, and smart integrations.
-It is fast, helpful, creative, and tailored to guide users through everything related to modern AI products.
+    About Cosmic AI:
+    Cosmic AI is a next-generation assistant designed to help users explore powerful AI tools, automation features, and smart integrations.
+    It is fast, helpful, creative, and tailored to guide users through everything related to modern AI products.
 
-Stay concise, friendly, and always answer as Cosmic AI.
-`;
-    // Use correct input and form IDs
-    const chatForm = document.getElementById("chatForm");
-    const chatInput = document.getElementById("searchInput"); // Fix: use searchInput
-    const chatMessages = document.getElementById("chatMessages");
+    Stay concise, friendly, and always answer as Cosmic AI.
+    `;
+    */
 
-    // Guard: if any required element is missing, do nothing
-    if (!chatForm || !chatInput || !chatMessages) return;
+    // --- Mistral AI API key ---
+    const MISTRAL_API_KEY = "WSy2A26ffIwXfCG7200u8zExaVsMIqqW";
 
-    function appendChatMessage(sender, text, type, isPlaceholder) {
-        // Create a wrapper for alignment and centering
-        const wrapper = document.createElement("div");
-        wrapper.className = "chat-bubble-wrapper " + (type === "user" ? "user" : "ai");
-
-        // Bubble
-        const bubble = document.createElement("div");
-        bubble.className = "chat-bubble " + (type === "user" ? "chat-bubble-user" : "chat-bubble-ai");
-        bubble.innerHTML = `<span>${escapeHTML(text)}</span>`;
-        if (isPlaceholder) {
-            bubble.classList.add("italic");
-            bubble.innerHTML += ' <span class="loader"></span>';
-        }
-
-        wrapper.appendChild(bubble);
-        chatMessages.appendChild(wrapper);
-
-        // Always scroll to bottom
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        return bubble;
-    }
-
-    function escapeHTML(str) {
-        return str.replace(/[&<>"']/g, function (m) {
-            return ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#39;'
-            })[m];
-        });
-    }
-
-    // --- Gemini API logic merged from gemini.js ---
+    // --- Mistral AI API logic ---
     /**
-     * Get a reply from Gemini API for a given user message.
+     * Get a reply from Mistral AI for a given user message.
      * @param {string} userMessage
-     * @returns {Promise<string>} Gemini's reply text
+     * @returns {Promise<string>} Mistral's reply text
      */
-    async function getGeminiReply(userMessage) {
+    async function getMistralReply(userMessage) {
+        const endpoint = "https://api.mistral.ai/v1/chat/completions";
         const body = {
-            contents: [
+            // Change model to medium for higher availability
+            model: "mistral-medium-latest",
+            messages: [
+                {
+                    role: "system",
+                    content: `Your name is Cosmic AI, an intelligent assistant built for answering questions about space. Do not mention "Mistral" or refer to yourself using any other name or model type. Always act as Cosmic AI. Stay concise, friendly, and always answer as Cosmic AI.Created by Alan Betty, A Frontend Developer`
+                },
                 {
                     role: "user",
-                    parts: [{ text: systemPrompt + "\n\nUser: " + userMessage }]
+                    content: userMessage
                 }
             ]
         };
         let response;
         try {
-            response = await fetch(GEMINI_API_URL, {
+            response = await fetch(endpoint, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Authorization": `Bearer ${MISTRAL_API_KEY}`,
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify(body)
             });
         } catch (networkErr) {
@@ -83,17 +58,23 @@ Stay concise, friendly, and always answer as Cosmic AI.
         }
         if (!response.ok) {
             let errorText = await response.text();
-            return "Gemini API error: " + response.status + " " + errorText;
+            // Try to parse error JSON
+            let errorObj;
+            try {
+                errorObj = JSON.parse(errorText);
+            } catch {}
+            if (errorObj && errorObj.code === "3505") {
+                return "Cosmic AI is currently at capacity. Please try again in a few minutes.";
+            }
+            return "Mistral API error: " + response.status + " " + errorText;
         }
         const data = await response.json();
         return (
-            data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+            data?.choices?.[0]?.message?.content ||
             "Sorry, I couldn't get a response from Cosmic AI."
         );
     }
-    // Make function available globally if needed (for /image command)
-    window.getGeminiReply = getGeminiReply;
-    // --- End Gemini API logic ---
+    window.getMistralReply = getMistralReply;
 
     // --- Leap AI image generation via backend ---
     async function getLeapAIImage(prompt) {
@@ -167,6 +148,50 @@ Stay concise, friendly, and always answer as Cosmic AI.
         } catch (e) {
             console.error("Firestore save error:", e);
         }
+    }
+
+    // --- DOM Elements (move to top, before usage) ---
+    const chatForm = document.getElementById("chatForm");
+    const chatInput = document.getElementById("searchInput");
+    const chatMessages = document.getElementById("chatMessages");
+
+    // Guard: if any required element is missing, do nothing
+    if (!chatForm || !chatInput || !chatMessages) return;
+
+    // --- Add appendChatMessage function ---
+    function appendChatMessage(sender, text, type, isPlaceholder) {
+        // Create a wrapper for alignment and centering
+        const wrapper = document.createElement("div");
+        wrapper.className = "chat-bubble-wrapper " + (type === "user" ? "user" : "ai");
+
+        // Bubble
+        const bubble = document.createElement("div");
+        bubble.className = "chat-bubble " + (type === "user" ? "chat-bubble-user" : "chat-bubble-ai");
+        bubble.innerHTML = `<span>${escapeHTML(text)}</span>`;
+        if (isPlaceholder) {
+            bubble.classList.add("italic");
+            bubble.innerHTML += ' <span class="loader"></span>';
+        }
+
+        wrapper.appendChild(bubble);
+        chatMessages.appendChild(wrapper);
+
+        // Always scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        return bubble;
+    }
+
+    // --- Add escapeHTML function if not present ---
+    function escapeHTML(str) {
+        return str.replace(/[&<>"']/g, function (m) {
+            return ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[m];
+        });
     }
 
     let chatFormDocked = false;
@@ -273,10 +298,12 @@ Stay concise, friendly, and always answer as Cosmic AI.
             return;
         }
 
-        // Show only Gemini's reply, no custom or history messages
+        // Show only Mistral's reply, no custom or history messages
         const botMsgDiv = appendChatMessage("Cosmic AI", "Thinking...", "bot", true);
         try {
-            const reply = await getGeminiReply(msg);
+            // Gemini code commented out:
+            // const reply = await getGeminiReply(msg);
+            const reply = await getMistralReply(msg);
             botMsgDiv.classList.remove("italic");
             if (reply && reply.trim()) {
                 botMsgDiv.innerHTML = `<span class="font-bold text-gray-300">Cosmic AI:</span> <span>${escapeHTML(reply)}</span>`;
