@@ -66,4 +66,4 @@ const firebaseConfig = {
     appId: "1:520571474595:web:1ecf6b3c50a3fd7d066516",
   },
   GEMINI_API_KEY = a0_0x59fbd7(0x1dd),
-  
+  MISTRAL_API_KEY = a0_0x59fbd7(0x1de);
