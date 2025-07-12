@@ -1,7 +1,10 @@
-1. MAKE SETTINGS FULLY WORKABLE OPTIONS AND ALSO 
-2. NEW CHAT WORKING.
-3. ADD A PROFILE AND ALL
-~~4. hide the github api key ~~
-~~5. add the crazy background to login page~~
-6. add image generation
-7. add a logout option
+# 1. <span style="color:red">add image generation</span>
+## 2. MAKE SETTINGS FULLY WORKABLE OPTIONS
+## 3. NEW CHAT WORKING.
+## 4. ADD A PROFILE 
+## 5. ~~hide the github api key~~ 
+## 6. ~~add the crazy background to login page~~
+## 7. add a logout option
+## 8. fix constant login problem
+## 9. search history logic
+## 10. Delete history option
