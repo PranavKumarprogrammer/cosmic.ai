@@ -1,5 +1,5 @@
 # 1. <span style="color:red">add image generation</span>
-## 2. MAKE SETTINGS FULLY WORKABLE OPTIONS
+## 2. minimalize the settings.
 ## 3. NEW CHAT WORKING.
 ## 4. ADD A PROFILE 
 ## 5. ~~hide the github api key~~ 

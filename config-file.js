@@ -1,71 +1,69 @@
-function a0_0x10c8() {
-  const _0x344870 = [
-    "1:928977027464:web:1a2189da6ec0b99458ba3d",
-    "7gYArhe",
-    "868431hRdpkU",
-    "4NMxlif",
-    "386906OVEcji",
-    "749108qDZlPU",
-    "AIzaSyD0Bh8pwS6Q4fxi80cWlWgGuv2B5U-Q9nE",
-    "5268xhhMjm",
-    "470gNrodO",
-    "cosmic-ai-c7633",
-    "2134840ZqJzgW",
-    "107325lTgdDK",
-    "AIzaSyC_99LRyPpiGKtpuY5kbarTOuWKxd4NoBg",
-    "WSy2A26ffIwXfCG7200u8zExaVsMIqqW",
-    "15CIlkfS",
-    "3468588roGnRB",
-    "23683ovzQlw",
-  ];
-  a0_0x10c8 = function () {
-    return _0x344870;
-  };
-  return a0_0x10c8();
-}
-function a0_0x5acb(_0x461d03, _0x31bbe5) {
-  const _0x10c87d = a0_0x10c8();
+const a0_0x59fbd7 = a0_0x1f61;
+function a0_0x1f61(_0x47dfa2, _0x3d877b) {
+  const _0x26307a = a0_0x2630();
   return (
-    (a0_0x5acb = function (_0x5acb70, _0x1b847b) {
-      _0x5acb70 = _0x5acb70 - 0x1da;
-      let _0x36a61a = _0x10c87d[_0x5acb70];
-      return _0x36a61a;
+    (a0_0x1f61 = function (_0x1f617b, _0x33e28d) {
+      _0x1f617b = _0x1f617b - 0x1d1;
+      let _0x4aff72 = _0x26307a[_0x1f617b];
+      return _0x4aff72;
     }),
-    a0_0x5acb(_0x461d03, _0x31bbe5)
+    a0_0x1f61(_0x47dfa2, _0x3d877b)
   );
 }
-const a0_0xde34b = a0_0x5acb;
-(function (_0x33e8c7, _0x30c82d) {
-  const _0x1b7e05 = a0_0x5acb,
-    _0x3e2242 = _0x33e8c7();
+function a0_0x2630() {
+  const _0x1fd503 = [
+    "1317897PlnWSM",
+    "cosmic-ai-1e297",
+    "23038PwjPpO",
+    "26430TFVNyF",
+    "244HDbzTe",
+    "AIzaSyBNbIARlIfE2o_SbM8wwg14D85mn7fQQ-I",
+    "2007MNGmob",
+    "19356pvbUsA",
+    "3855416bGtizJ",
+    "AIzaSyD0Bh8pwS6Q4fxi80cWlWgGuv2B5U-Q9nE",
+    "P2QA1nnI93aRsUW21A2g0uiPD57RObQB",
+    "2539038poHreX",
+    "cosmic-ai-1e297.firebasestorage.app",
+    "5AbQCzj",
+    "cosmic-ai-1e297.firebaseapp.com",
+    "789275GNwuQO",
+  ];
+  a0_0x2630 = function () {
+    return _0x1fd503;
+  };
+  return a0_0x2630();
+}
+(function (_0x2c29f1, _0x175fbd) {
+  const _0x34b34a = a0_0x1f61,
+    _0x279845 = _0x2c29f1();
   while (!![]) {
     try {
-      const _0x5a8a48 =
-        -parseInt(_0x1b7e05(0x1df)) / 0x1 +
-        (-parseInt(_0x1b7e05(0x1de)) / 0x2) *
-          (-parseInt(_0x1b7e05(0x1dd)) / 0x3) +
-        (parseInt(_0x1b7e05(0x1e0)) / 0x4) *
-          (-parseInt(_0x1b7e05(0x1e9)) / 0x5) +
-        (-parseInt(_0x1b7e05(0x1ea)) / 0x6) *
-          (parseInt(_0x1b7e05(0x1dc)) / 0x7) +
-        -parseInt(_0x1b7e05(0x1e5)) / 0x8 +
-        (parseInt(_0x1b7e05(0x1e6)) / 0x9) *
-          (parseInt(_0x1b7e05(0x1e3)) / 0xa) +
-        (parseInt(_0x1b7e05(0x1da)) / 0xb) * (parseInt(_0x1b7e05(0x1e2)) / 0xc);
-      if (_0x5a8a48 === _0x30c82d) break;
-      else _0x3e2242["push"](_0x3e2242["shift"]());
-    } catch (_0x5bb26f) {
-      _0x3e2242["push"](_0x3e2242["shift"]());
+      const _0x5739c8 =
+        (-parseInt(_0x34b34a(0x1d1)) / 0x1) *
+          (-parseInt(_0x34b34a(0x1d6)) / 0x2) +
+        (-parseInt(_0x34b34a(0x1db)) / 0x3) *
+          (-parseInt(_0x34b34a(0x1d8)) / 0x4) +
+        parseInt(_0x34b34a(0x1d3)) / 0x5 +
+        -parseInt(_0x34b34a(0x1df)) / 0x6 +
+        parseInt(_0x34b34a(0x1d4)) / 0x7 +
+        parseInt(_0x34b34a(0x1dc)) / 0x8 +
+        (-parseInt(_0x34b34a(0x1da)) / 0x9) *
+          (parseInt(_0x34b34a(0x1d7)) / 0xa);
+      if (_0x5739c8 === _0x175fbd) break;
+      else _0x279845["push"](_0x279845["shift"]());
+    } catch (_0x5d7c56) {
+      _0x279845["push"](_0x279845["shift"]());
     }
   }
-})(a0_0x10c8, 0x4705a);
+})(a0_0x2630, 0x411a2);
 const firebaseConfig = {
-    apiKey: a0_0xde34b(0x1e7),
-    authDomain: "cosmic-ai-c7633.firebaseapp.com",
-    projectId: a0_0xde34b(0x1e4),
-    storageBucket: "cosmic-ai-c7633.firebasestorage.app",
-    messagingSenderId: "928977027464",
-    appId: a0_0xde34b(0x1db),
+    apiKey: a0_0x59fbd7(0x1d9),
+    authDomain: a0_0x59fbd7(0x1d2),
+    projectId: a0_0x59fbd7(0x1d5),
+    storageBucket: a0_0x59fbd7(0x1e0),
+    messagingSenderId: "520571474595",
+    appId: "1:520571474595:web:1ecf6b3c50a3fd7d066516",
   },
-  GEMINI_API_KEY = a0_0xde34b(0x1e1),
-  MISTRAL_API_KEY = a0_0xde34b(0x1e8);
+  GEMINI_API_KEY = a0_0x59fbd7(0x1dd),
+  MISTRAL_API_KEY = a0_0x59fbd7(0x1de);
