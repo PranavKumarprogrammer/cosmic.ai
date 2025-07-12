@@ -154,6 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("searchInput");
     const chatMessages = document.getElementById("chatMessages");
+    const clearHistoryButton = document.getElementById("clearHistoryButton"); // <-- add here
 
     // Guard: if any required element is missing, do nothing
     if (!chatForm || !chatInput || !chatMessages) return;
@@ -387,6 +388,35 @@ document.addEventListener("DOMContentLoaded", () => {
             : [];
         // Use historyArr instead of searchHistory
         // ...existing code...
+    }
+
+    // --- Clear History Function ---
+    async function clearUserHistory() {
+        userSearchHistory = [];
+        window.userSearchHistory = userSearchHistory;
+        if (typeof renderSidebarHistory === "function") renderSidebarHistory();
+        // Clear from Firestore if possible
+        if (db && currentUser) {
+            try {
+                await db.collection("users").doc(currentUser.uid).set(
+                    { searchHistory: [] },
+                    { merge: true }
+                );
+            } catch (e) {
+                console.error("Error clearing history in Firestore:", e);
+            }
+        }
+    }
+    window.clearUserHistory = clearUserHistory;
+
+    // --- Clear History Button Handler ---
+    if (clearHistoryButton) {
+        clearHistoryButton.addEventListener("click", async function() {
+            if (confirm("Are you sure you want to clear your search history? This cannot be undone.")) {
+                await clearUserHistory();
+                alert("Your search history has been cleared.");
+            }
+        });
     }
 });
 

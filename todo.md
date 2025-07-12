@@ -4,7 +4,7 @@
 ## 4. ADD A PROFILE 
 ## 5. ~~hide the github api key~~ 
 ## 6. ~~add the crazy background to login page~~
-## 7. add a logout option
-## 8. fix constant login problem
+## 7. ~~add a logout option~~
+## 8. ~~fix constant login problem~~
 ## 9. search history logic
-## 10. Delete history option
+## 10. ~~Delete history option~~
