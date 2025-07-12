@@ -1,22 +1,48 @@
 document.addEventListener("DOMContentLoaded", () => {
     // --- Login check removed, now handled in auth-check.js ---
 
-    // --- Gemini API code commented out ---
-    /*
+    // --- Gemini API code ---
     const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY;
 
-    // Add system prompt
     const systemPrompt = `
-    // Your name is **Cosmic AI**, an intelligent assistant built for answering questions about space.
+    Your name is Cosmic AI, an intelligent assistant built for answering questions about space.
     Do not mention "Gemini" or refer to yourself using any other name or model type. Always act as Cosmic AI.
-
     About Cosmic AI:
     Cosmic AI is a next-generation assistant designed to help users explore powerful AI tools, automation features, and smart integrations.
     It is fast, helpful, creative, and tailored to guide users through everything related to modern AI products.
-
     Stay concise, friendly, and always answer as Cosmic AI.
     `;
-    */
+
+    async function getGeminiReply(userMessage) {
+        const body = {
+            contents: [
+                { 
+                    role: "user", 
+                    parts: [{ text: `${systemPrompt}\n${userMessage}` }] // Combine system prompt and user message
+                }
+            ]
+        };
+        let response;
+        try {
+            response = await fetch(GEMINI_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+        } catch (networkErr) {
+            return "Network error: " + networkErr.message;
+        }
+        if (!response.ok) {
+            let errorText = await response.text();
+            return "Gemini API error: " + response.status + " " + errorText;
+        }
+        const data = await response.json();
+        return (
+            data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+            "Sorry, I couldn't get a response from Cosmic AI."
+        );
+    }
+    window.getGeminiReply = getGeminiReply;
 
     // --- Mistral AI API key ---
     const MISTRAL_API_KEY = "WSy2A26ffIwXfCG7200u8zExaVsMIqqW";
@@ -302,9 +328,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Show only Mistral's reply, no custom or history messages
         const botMsgDiv = appendChatMessage("Cosmic AI", "Thinking...", "bot", true);
         try {
-            // Gemini code commented out:
-            // const reply = await getGeminiReply(msg);
-            const reply = await getMistralReply(msg);
+            const reply = await getGeminiReply(msg);
             botMsgDiv.classList.remove("italic");
             if (reply && reply.trim()) {
                 botMsgDiv.innerHTML = `<span class="font-bold text-gray-300">Cosmic AI:</span> <span>${escapeHTML(reply)}</span>`;
