@@ -97,6 +97,7 @@ registerFormElement.addEventListener('submit', async (e) => {
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         console.log('User registered:', userCredential.user);
         alert('Registration successful! Logging you in...');
+        localStorage.setItem("cosmicai_login_time", Date.now().toString());
         window.location.href = "main.html";
     } catch (error) {
         console.error('Registration error:', error);
@@ -114,6 +115,7 @@ loginFormElement.addEventListener('submit', async (e) => {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         console.log('User logged in:', userCredential.user);
         alert('Login successful!');
+        localStorage.setItem("cosmicai_login_time", Date.now().toString());
         window.location.href = "main.html";
     } catch (error) {
         console.error('Login error:', error);

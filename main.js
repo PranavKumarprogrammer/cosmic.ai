@@ -154,6 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("searchInput");
     const chatMessages = document.getElementById("chatMessages");
+    const clearHistoryButton = document.getElementById("clearHistoryButton"); // <-- add here
 
     // Guard: if any required element is missing, do nothing
     if (!chatForm || !chatInput || !chatMessages) return;
@@ -320,6 +321,64 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // --- Auto-logout after 1 day ---
+    function checkAutoLogout() {
+        const loginTimestamp = localStorage.getItem("cosmicai_login_time");
+        if (loginTimestamp) {
+            const now = Date.now();
+            const oneDayMs = 24 * 60 * 60 * 1000;
+            if (now - Number(loginTimestamp) > oneDayMs) {
+                doLogout(true);
+            }
+        }
+    }
+
+    // --- Logout function ---
+    function doLogout(auto) {
+        if (typeof firebase !== "undefined" && firebase.auth) {
+            firebase.auth().signOut().then(() => {
+                localStorage.removeItem("cosmicai_login_time");
+                // Optionally clear other user data here
+                if (auto) {
+                    alert("You have been automatically logged out for security. Please log in again.");
+                }
+                window.location.replace("index.html");
+            });
+        } else {
+            // Fallback: just redirect
+            localStorage.removeItem("cosmicai_login_time");
+            window.location.replace("login.html");
+        }
+    }
+    window.doLogout = doLogout;
+
+    // --- Set login timestamp on login ---
+    if (typeof firebase !== "undefined" && firebase.auth) {
+        firebase.auth().onAuthStateChanged(function(user) {
+            // ...existing code...
+            if (user) {
+                // Set login timestamp if not already set
+                if (!localStorage.getItem("cosmicai_login_time")) {
+                    localStorage.setItem("cosmicai_login_time", Date.now().toString());
+                }
+                checkAutoLogout();
+            } else {
+                localStorage.removeItem("cosmicai_login_time");
+            }
+        });
+    }
+
+    // --- Logout button click handler ---
+    const logoutButton = document.getElementById("logoutButton");
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function() {
+            doLogout(false);
+        });
+    }
+
+    // --- Also check auto-logout on every page load ---
+    checkAutoLogout();
+
     // If you have a function to populate history in the UI, update it to use userSearchHistory
     // Example:
     function populateHistory() {
@@ -330,4 +389,35 @@ document.addEventListener("DOMContentLoaded", () => {
         // Use historyArr instead of searchHistory
         // ...existing code...
     }
+
+    // --- Clear History Function ---
+    async function clearUserHistory() {
+        userSearchHistory = [];
+        window.userSearchHistory = userSearchHistory;
+        if (typeof renderSidebarHistory === "function") renderSidebarHistory();
+        // Clear from Firestore if possible
+        if (db && currentUser) {
+            try {
+                await db.collection("users").doc(currentUser.uid).set(
+                    { searchHistory: [] },
+                    { merge: true }
+                );
+            } catch (e) {
+                console.error("Error clearing history in Firestore:", e);
+            }
+        }
+    }
+    window.clearUserHistory = clearUserHistory;
+
+    // --- Clear History Button Handler ---
+    if (clearHistoryButton) {
+        clearHistoryButton.addEventListener("click", async function() {
+            if (confirm("Are you sure you want to clear your search history? This cannot be undone.")) {
+                await clearUserHistory();
+                alert("Your search history has been cleared.");
+            }
+        });
+    }
 });
+
+console.warn("You're Crossing the Limits. Better go back. - Cosmic AI");
