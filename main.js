@@ -123,70 +123,80 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Load search history from Firestore
-    async function loadUserSearchHistory() {
-        if (!db || !currentUser) return;
-        try {
-            const doc = await db.collection("users").doc(currentUser.uid).get();
-            userSearchHistory = (doc.exists && Array.isArray(doc.data().searchHistory))
-                ? doc.data().searchHistory.map(session => {
-                    // Migrate old format if needed
-                    if (session && Array.isArray(session.messages)) {
-                        // If messages are [{role, content}], convert to [{prompt, reply}]
-                        if (session.messages.length && session.messages[0].role) {
-                            const pairs = [];
-                            for (let i = 0; i < session.messages.length; i++) {
-                                if (session.messages[i].role === "user") {
-                                    const promptMsg = session.messages[i].content;
-                                    let replyMsg = "";
-                                    if (
-                                        i + 1 < session.messages.length &&
-                                        session.messages[i + 1].role === "assistant"
-                                    ) {
-                                        replyMsg = session.messages[i + 1].content;
-                                        i++;
-                                    }
-                                    pairs.push({ prompt: promptMsg, reply: replyMsg });
+    // Helper to get user document ID (prefer displayName, fallback to UID)
+function getUserDocId() {
+    if (currentUser && currentUser.displayName) {
+        // Remove spaces and special chars for Firestore doc ID safety
+        return currentUser.displayName.replace(/[^a-zA-Z0-9_-]/g, "_");
+    }
+    return currentUser ? currentUser.uid : "unknown";
+}
+
+// Load search history from Firestore
+async function loadUserSearchHistory() {
+    if (!db || !currentUser) return;
+    try {
+        const docId = getUserDocId();
+        const doc = await db.collection("users").doc(docId).get();
+        userSearchHistory = (doc.exists && Array.isArray(doc.data().searchHistory))
+            ? doc.data().searchHistory.map(session => {
+                // Migrate old format if needed
+                if (session && Array.isArray(session.messages)) {
+                    // If messages are [{role, content}], convert to [{prompt, reply}]
+                    if (session.messages.length && session.messages[0].role) {
+                        const pairs = [];
+                        for (let i = 0; i < session.messages.length; i++) {
+                            if (session.messages[i].role === "user") {
+                                const promptMsg = session.messages[i].content;
+                                let replyMsg = "";
+                                if (
+                                    i + 1 < session.messages.length &&
+                                    session.messages[i + 1].role === "assistant"
+                                ) {
+                                    replyMsg = session.messages[i + 1].content;
+                                    i++;
                                 }
+                                pairs.push({ prompt: promptMsg, reply: replyMsg });
                             }
-                            return { messages: pairs };
                         }
-                        // Already in new format
-                        return { messages: session.messages.map(m =>
-                            m.user !== undefined
-                                ? { prompt: m.user, reply: m.reply }
-                                : m
-                        ) };
+                        return { messages: pairs };
                     }
-                    return { messages: [] };
-                })
-                : [];
-            window.userSearchHistory = userSearchHistory;
-            if (typeof renderSidebarHistory === "function") setTimeout(renderSidebarHistory, 0);
-        } catch (e) {
-            userSearchHistory = [];
-            window.userSearchHistory = userSearchHistory;
-            if (typeof renderSidebarHistory === "function") setTimeout(renderSidebarHistory, 0);
-        }
+                    // Already in new format
+                    return { messages: session.messages.map(m =>
+                        m.user !== undefined
+                            ? { prompt: m.user, reply: m.reply }
+                            : m
+                    ) };
+                }
+                return { messages: [] };
+            })
+            : [];
+        window.userSearchHistory = userSearchHistory;
+        if (typeof renderSidebarHistory === "function") setTimeout(renderSidebarHistory, 0);
+    } catch (e) {
+        userSearchHistory = [];
+        window.userSearchHistory = userSearchHistory;
+        if (typeof renderSidebarHistory === "function") setTimeout(renderSidebarHistory, 0);
     }
+}
 
-    // Save search history to Firestore
-    async function saveUserSearchHistory() {
-        if (!db || !currentUser) return;
-        try {
-            // Firestore does NOT allow nested arrays, so each session is { messages: [...] }
-            await db.collection("users").doc(currentUser.uid).set(
-                { searchHistory: userSearchHistory },
-                { merge: true }
-            );
-            window.userSearchHistory = userSearchHistory;
-            if (typeof renderSidebarHistory === "function") setTimeout(renderSidebarHistory, 0);
-        } catch (e) {
-            console.error("Firestore save error:", e);
-        }
+// Save search history to Firestore
+async function saveUserSearchHistory() {
+    if (!db || !currentUser) return;
+    try {
+        const docId = getUserDocId();
+        await db.collection("users").doc(docId).set(
+            { searchHistory: userSearchHistory },
+            { merge: true }
+        );
+        window.userSearchHistory = userSearchHistory;
+        if (typeof renderSidebarHistory === "function") setTimeout(renderSidebarHistory, 0);
+    } catch (e) {
+        console.error("Firestore save error:", e);
     }
+}
 
-    // --- DOM Elements (move to top, before usage) ---
+// --- DOM Elements (move to top, before usage) ---
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("searchInput");
     const chatMessages = document.getElementById("chatMessages");
@@ -483,10 +493,10 @@ document.addEventListener("DOMContentLoaded", () => {
         window.userSearchHistory = userSearchHistory;
         currentChatSession = [];
         if (typeof renderSidebarHistory === "function") renderSidebarHistory();
-        // Clear from Firestore if possible
         if (db && currentUser) {
             try {
-                await db.collection("users").doc(currentUser.uid).set(
+                const docId = getUserDocId();
+                await db.collection("users").doc(docId).set(
                     { searchHistory: [] },
                     { merge: true }
                 );
