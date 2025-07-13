@@ -12,3 +12,4 @@
 ## 12. ~~login logic in firebase~~
 ## 13. ~~guest login~~
 ## 14. Fix microsoft login option
+## 15. improve overall UI/UX
