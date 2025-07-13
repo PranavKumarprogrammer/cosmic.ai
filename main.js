@@ -154,8 +154,14 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Auth state changed:", user);
             currentUser = user;
             if (user) {
+                // Set user info for profile display
+                window.userDisplayName = user.displayName;
+                window.userPhotoURL = user.photoURL;
+                if (typeof renderUserProfile === 'function') renderUserProfile();
                 loadUserSearchHistory();
             } else {
+                window.userDisplayName = null;
+                window.userPhotoURL = null;
                 userSearchHistory = [];
                 window.userSearchHistory = userSearchHistory;
                 if (typeof renderSidebarHistory === "function") renderSidebarHistory();
@@ -608,8 +614,8 @@ function checkAutoLogout() {
     const loginTime = localStorage.getItem("cosmicai_login_time");
     if (loginTime) {
         const now = Date.now();
-        const fourHours = 4 * 60 * 60 * 1000;
-        if (now - parseInt(loginTime) > fourHours) {
+        const fifteenMinutes = 15 * 60 * 1000;
+        if (now - parseInt(loginTime) > fifteenMinutes) {
             alert("You have been automatically logged out due to inactivity. Please log in again.");
             doLogout(true);
         }
