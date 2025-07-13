@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
     */
 
     // --- Mistral AI API key ---
-    const MISTRAL_API_KEY = "WSy2A26ffIwXfCG7200u8zExaVsMIqqW";
 
     // --- Mistral AI API logic ---
     /**

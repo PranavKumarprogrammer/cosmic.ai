@@ -294,8 +294,8 @@
                 : [];
             if (isExpanded && historyArr.length) {
                 historyArr.slice().reverse().forEach((query, idx) => {
-                    // Shorten query to 24 letters + …
-                    let shortQuery = query.trim();
+                    // Ensure query is a string before trimming
+                    let shortQuery = (typeof query === "string") ? query.trim() : String(query);
                     if (shortQuery.length > 24) {
                         shortQuery = shortQuery.slice(0, 24) + '...';
                     }
@@ -306,7 +306,9 @@
                     item.addEventListener('click', () => {
                         if (searchInput) {
                             searchInput.value = query;
-                            searchInput.focus();
+                            if (window.top === window.self) {
+                                searchInput.focus();
+                            }
                             stopTypewriterEffect();
                             searchInput.setAttribute('placeholder', '');
                         }
@@ -857,4 +859,9 @@
                 if (starfieldToggle) starfieldToggle.checked = isStarfieldEnabled;
             });
         }
-          
+
+        // Focus on search input if not in cross-origin iframe
+        if (window.top === window.self) {
+            searchInput.focus();
+        }
+
