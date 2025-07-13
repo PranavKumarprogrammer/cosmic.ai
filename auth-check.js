@@ -9,6 +9,12 @@
         return;
     }
 
+    // --- Allow guest access ---
+    if (localStorage.getItem('cosmicai_guest') === 'true') {
+        document.documentElement.style.visibility = "";
+        return;
+    }
+
     // Hide page until auth state is known
     document.documentElement.style.visibility = "hidden";
 
