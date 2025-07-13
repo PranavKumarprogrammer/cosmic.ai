@@ -283,34 +283,45 @@
             });
         }
 
-        // --- Sidebar history rendering (Gemini-style) ---
+        // --- Sidebar history rendering (ChatGPT-style sessions) ---
         function renderSidebarHistory() {
             if (!sidebarHistoryList) return;
             sidebarHistoryList.innerHTML = '';
-            // Only show when sidebar is expanded and user is logged in and there is history
             const isExpanded = !sidebar.classList.contains('collapsed');
             const historyArr = (typeof window.userSearchHistory !== "undefined" && window.userSearchHistory.length)
                 ? window.userSearchHistory
                 : [];
             if (isExpanded && historyArr.length) {
-                historyArr.slice().reverse().forEach((query, idx) => {
-                    // Ensure query is a string before trimming
-                    let shortQuery = (typeof query === "string") ? query.trim() : String(query);
-                    if (shortQuery.length > 24) {
-                        shortQuery = shortQuery.slice(0, 24) + '...';
+                historyArr.slice().reverse().forEach((sessionObj, idx) => {
+                    // Each sessionObj is { messages: [...] }
+                    let firstPromptMsg = "";
+                    if (sessionObj && Array.isArray(sessionObj.messages)) {
+                        const firstPrompt = sessionObj.messages[0];
+                        firstPromptMsg = firstPrompt && firstPrompt.prompt ? firstPrompt.prompt.trim() : "[Empty]";
+                    } else {
+                        firstPromptMsg = "[Empty]";
+                    }
+                    if (firstPromptMsg.length > 24) {
+                        firstPromptMsg = firstPromptMsg.slice(0, 24) + '...';
                     }
                     const item = document.createElement('div');
                     item.className = 'sidebar-history-item p-2 mb-2 bg-gray-800 rounded text-gray-200 text-sm truncate cursor-pointer hover:bg-gray-700 transition flex items-center justify-between';
-                    item.title = query;
-                    item.textContent = shortQuery;
+                    item.title = firstPromptMsg;
+                    item.textContent = firstPromptMsg;
                     item.addEventListener('click', () => {
-                        if (searchInput) {
-                            searchInput.value = query;
-                            if (window.top === window.self) {
-                                searchInput.focus();
-                            }
-                            stopTypewriterEffect();
-                            searchInput.setAttribute('placeholder', '');
+                        // Load session into chatMessages UI
+                        const chatMessages = document.getElementById('chatMessages');
+                        if (chatMessages) {
+                            chatMessages.innerHTML = "";
+                            chatMessages.classList.remove("hidden");
+                            sessionObj.messages.forEach(msgObj => {
+                                if (msgObj.prompt) {
+                                    appendChatMessage("You", msgObj.prompt, "user");
+                                }
+                                if (msgObj.reply) {
+                                    appendChatMessage("Cosmic AI", msgObj.reply, "ai");
+                                }
+                            });
                         }
                     });
                     const removeBtn = document.createElement('button');
