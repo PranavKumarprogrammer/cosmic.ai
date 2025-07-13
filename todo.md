@@ -9,4 +9,5 @@
 ## 9. ~~search history logic~~
 ## 10. ~~Delete history option~~
 # 11. <span style="color:darkblue">delete temp1 after everything</span>
-## 12. login logic in firebase
+## 12. ~~login logic in firebase~~
+## 13. guest login

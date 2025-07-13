@@ -17,40 +17,38 @@ async function handleSocialMediaLogin(provider) {
         alert('Login successful!');
         window.location.href = "main.html";
     } catch (error) {
+        // Microsoft OAuth errors
+        if (provider.providerId === 'microsoft.com') {
+            // Log the full error object for debugging
+            console.error('Full Microsoft OAuth error:', error);
+            let errorMsg = "Microsoft login failed.";
+            if (error.message) errorMsg += "\n" + error.message;
+            if (error.code) errorMsg += "\nError code: " + error.code;
+            if (error.customData && error.customData.error) errorMsg += "\nDetails: " + error.customData.error;
+            alert(errorMsg + "\nPlease check your Azure app registration, client secret, and redirect URI in both Azure and Firebase.");
+            return;
+        }
         if (error.code === 'auth/account-exists-with-different-credential') {
             const email = error.email || (error.customData && error.customData.email);
-            let pendingCredential = error.credential;
-            if (provider.providerId === 'github.com') {
-                try {
-                    const methods = await auth.fetchSignInMethodsForEmail(email);
-                    if (methods.includes('github.com')) {
-                        const githubResult = await auth.signInWithPopup(githubProvider);
-                        alert('GitHub sign in successful!');
-                        window.location.href = "main.html";
-                    } else {
-                        const emailParts = email.split('@');
-                        const aliasEmail = `${emailParts[0]}+${provider.providerId}-${Date.now()}@${emailParts[1]}`;
-                        const randomPassword = Math.random().toString(36).slice(-8);
-                        const registrationResult = await auth.createUserWithEmailAndPassword(aliasEmail, randomPassword);
-                        console.log('Alias account registered:', registrationResult.user);
-                        window.location.href = "main.html";
-                    }
-                } catch (githubError) {
-                    console.error('GitHub sign-in error:', githubError);
-                    alert(`GitHub error: ${githubError.message}`);
-                }
-            } else {
-                const emailParts = email.split('@');
-                const aliasEmail = `${emailParts[0]}+${provider.providerId}-${Date.now()}@${emailParts[1]}`;
-                const randomPassword = Math.random().toString(36).slice(-8); // simple random password
-                try {
-                    const registrationResult = await auth.createUserWithEmailAndPassword(aliasEmail, randomPassword);
-                    console.log('Alias account registered:', registrationResult.user);
+            const pendingCredential = error.credential;
+            try {
+                const methods = await auth.fetchSignInMethodsForEmail(email);
+                // If the provider is available, sign in with it
+                if (methods.includes(provider.providerId)) {
+                    let providerToUse;
+                    if (provider.providerId === 'github.com') providerToUse = githubProvider;
+                    else if (provider.providerId === 'microsoft.com') providerToUse = microsoftProvider;
+                    else if (provider.providerId === 'google.com') providerToUse = googleProvider;
+                    else providerToUse = googleProvider; // fallback
+                    const linkedResult = await auth.signInWithPopup(providerToUse);
+                    alert('Login successful!');
                     window.location.href = "main.html";
-                } catch (creationError) {
-                    console.error('Error during alias registration:', creationError);
-                    alert(`Registration failed: ${creationError.message}`);
+                } else {
+                    alert(`Please log in using: ${methods.join(', ')} for this email.`);
                 }
+            } catch (linkError) {
+                console.error('Account linking error:', linkError);
+                alert(`Login failed: ${linkError.message}`);
             }
         } else {
             console.error('Social media login error:', error);
@@ -64,63 +62,72 @@ window.signInWithGoogle = () => handleSocialMediaLogin(googleProvider);
 window.signInWithMicrosoft = () => handleSocialMediaLogin(microsoftProvider);
 window.signInWithGithub = () => handleSocialMediaLogin(githubProvider);
 
-//!! Login-Register Switcher
-const container = document.querySelector('.container');
-const registerBtn = document.querySelector('.register-btn');
-const loginBtn = document.querySelector('.login-btn');
-const loginForm = document.querySelector('.form-box.login');
-const registerForm = document.querySelector('.form-box.register');
+//!! Login-Register Switcher and Form Handlers
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.container');
+    const registerBtn = document.querySelector('.register-btn');
+    const loginBtn = document.querySelector('.login-btn');
+    const loginForm = document.querySelector('.form-box.login');
+    const registerForm = document.querySelector('.form-box.register');
 
-registerBtn.addEventListener('click', () => {
-    container.classList.add('active');
-    loginForm.style.visibility = 'hidden'; // Hide login form
-    registerForm.style.visibility = 'visible'; // Show register form
-});
+    if (registerBtn && container && loginForm && registerForm) {
+        registerBtn.addEventListener('click', () => {
+            container.classList.add('active');
+            loginForm.style.visibility = 'hidden';
+            registerForm.style.visibility = 'visible';
+        });
 
-loginBtn.addEventListener('click', () => {
-    container.classList.remove('active');
-    loginForm.style.visibility = 'visible'; // Show login form
-    registerForm.style.visibility = 'hidden'; // Hide register form
-});
+        loginBtn.addEventListener('click', () => {
+            container.classList.remove('active');
+            loginForm.style.visibility = 'visible';
+            registerForm.style.visibility = 'hidden';
+        });
+    }
 
-//!! Email Registration/Login
-const registerFormElement = document.querySelector('.form-box.register form');
-const loginFormElement = document.querySelector('.form-box.login form');
+    // Email Registration/Login
+    const registerFormElement = document.querySelector('.form-box.register form');
+    const loginFormElement = document.querySelector('.form-box.login form');
 
-// ! email registration
-registerFormElement.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = registerFormElement.querySelector('input[type="email"]').value;
-    const password = registerFormElement.querySelector('input[type="password"]').value;
+    // Email registration
+    if (registerFormElement) {
+        registerFormElement.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = registerFormElement.querySelector('input[type="email"]').value;
+            const password = registerFormElement.querySelector('input[type="password"]').value;
 
-    try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        console.log('User registered:', userCredential.user);
-        alert('Registration successful! Logging you in...');
-        localStorage.setItem("cosmicai_login_time", Date.now().toString());
-        window.location.href = "main.html";
-    } catch (error) {
-        console.error('Registration error:', error);
-        alert(error.message);
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                console.log('User registered:', userCredential.user);
+                alert('Registration successful! Logging you in...');
+                localStorage.setItem("cosmicai_login_time", Date.now().toString());
+                window.location.href = "main.html";
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert(error.message);
+            }
+        });
+    }
+
+    // Email login
+    if (loginFormElement) {
+        loginFormElement.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = loginFormElement.querySelector('input[type="text"]').value;
+            const password = loginFormElement.querySelector('input[type="password"]').value;
+
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                console.log('User logged in:', userCredential.user);
+                alert('Login successful!');
+                localStorage.setItem("cosmicai_login_time", Date.now().toString());
+                window.location.href = "main.html";
+            } catch (error) {
+                console.error('Login error:', error);
+                alert(error.message);
+            }
+        });
     }
 });
 
-//! email login
-loginFormElement.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = loginFormElement.querySelector('input[type="text"]').value; // Assuming email is entered in the "Username" field
-    const password = loginFormElement.querySelector('input[type="password"]').value;
-
-    try {
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        console.log('User logged in:', userCredential.user);
-        alert('Login successful!');
-        localStorage.setItem("cosmicai_login_time", Date.now().toString());
-        window.location.href = "main.html";
-    } catch (error) {
-        console.error('Login error:', error);
-        alert(error.message);
-    }
-});
 
 
