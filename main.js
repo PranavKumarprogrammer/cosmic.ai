@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // --- Login check removed, now handled in auth-check.js ---
-
-    // --- Gemini API code commented out ---
+    // --- Gemini API code---
     /*
     const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY;
 
@@ -74,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
     window.getMistralReply = getMistralReply;
+    // --- End Mistral AI API logic ---
 
     // --- Leap AI image generation via backend ---
     async function getLeapAIImage(prompt) {
@@ -102,9 +101,23 @@ document.addEventListener("DOMContentLoaded", () => {
     let userSearchHistory = []; // Array of { messages: [...] }
     let currentChatSession = []; // Array of { prompt: "...", reply: "..." }
 
-    // Firestore setup (assumes firebase/app and firebase/firestore are loaded globally)
+    // --- Guest Session Logic ---
+    const isGuest = localStorage.getItem('cosmicai_guest') === 'true';
+    let guestPromptCount = Number(localStorage.getItem('cosmicai_guest_prompts') || '0');
+    let guestStartTime = Number(localStorage.getItem('cosmicai_guest_start') || '0');
+    let guestHistory = JSON.parse(localStorage.getItem('cosmicai_guest_history') || '[]');
+
+    // Override userSearchHistory for guest
+    if (isGuest) {
+        window.userSearchHistory = guestHistory;
+        // Hide logout button text (optional)
+        const logoutButton = document.getElementById("logoutButton");
+        if (logoutButton) logoutButton.textContent = "Logout (Guest)";
+    }
+
+    // --- Firestore setup: block for guest ---
     let db;
-    if (typeof firebase !== "undefined" && typeof firebaseConfig !== "undefined") {
+    if (!isGuest && typeof firebase !== "undefined" && typeof firebaseConfig !== "undefined") {
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
             console.log("Firebase initialized", firebaseConfig);
@@ -132,7 +145,7 @@ function getUserDocId() {
     return currentUser ? currentUser.uid : "unknown";
 }
 
-// Load search history from Firestore
+// ** wLoad search history from Firestore
 async function loadUserSearchHistory() {
     if (!db || !currentUser) return;
     try {
@@ -416,22 +429,54 @@ async function saveUserSearchHistory() {
             userSearchHistory[userSearchHistory.length - 1].messages = [...currentChatSession];
             saveUserSearchHistory();
         }
-    });
 
-    // --- Auto-logout after 1 day ---
-    function checkAutoLogout() {
-        const loginTimestamp = localStorage.getItem("cosmicai_login_time");
-        if (loginTimestamp) {
+        // --- Guest prompt limit and time check ---
+        if (isGuest) {
+            guestPromptCount++;
+            localStorage.setItem('cosmicai_guest_prompts', guestPromptCount.toString());
+            // 3 prompt limit
+            if (guestPromptCount > 3) {
+                alert("Guest access is limited to 3 prompts. Please log in or register to continue using Cosmic AI.");
+                doLogout(false);
+                return;
+            }
+            // 15 minute limit
             const now = Date.now();
-            const oneDayMs = 24 * 60 * 60 * 1000;
-            if (now - Number(loginTimestamp) > oneDayMs) {
-                doLogout(true);
+            if (guestStartTime && now - guestStartTime > 15 * 60 * 1000) {
+                alert("Guest session expired (15 minutes). Please log in or register to continue.");
+                doLogout(false);
+                return;
             }
         }
-    }
+
+        // --- Save history for guest ---
+        if (isGuest) {
+            // Save session in guestHistory (local only)
+            if (currentChatSession.length === 1) {
+                guestHistory.push({ messages: [...currentChatSession] });
+            } else {
+                guestHistory[guestHistory.length - 1].messages = [...currentChatSession];
+            }
+            if (guestHistory.length > 50) guestHistory = guestHistory.slice(-50);
+            localStorage.setItem('cosmicai_guest_history', JSON.stringify(guestHistory));
+            window.userSearchHistory = guestHistory;
+            if (typeof renderSidebarHistory === "function") setTimeout(renderSidebarHistory, 0);
+        } else {
+            // ...existing code for Firestore...
+        }
+    });
 
     // --- Logout function ---
     function doLogout(auto) {
+        // Clear guest data if guest
+        if (isGuest) {
+            localStorage.removeItem('cosmicai_guest');
+            localStorage.removeItem('cosmicai_guest_start');
+            localStorage.removeItem('cosmicai_guest_prompts');
+            localStorage.removeItem('cosmicai_guest_history');
+            window.location.replace("login.html");
+            return;
+        }
         if (typeof firebase !== "undefined" && firebase.auth) {
             firebase.auth().signOut().then(() => {
                 localStorage.removeItem("cosmicai_login_time");
@@ -448,6 +493,18 @@ async function saveUserSearchHistory() {
         }
     }
     window.doLogout = doLogout;
+
+    // --- Auto-logout for guest after 15 minutes ---
+    function checkGuestTimeout() {
+        if (isGuest) {
+            const now = Date.now();
+            if (guestStartTime && now - guestStartTime > 15 * 60 * 1000) {
+                alert("Guest session expired (15 minutes). Please log in or register to continue.");
+                doLogout(false);
+            }
+        }
+    }
+    setInterval(checkGuestTimeout, 60000); // Check every minute
 
     // --- Set login timestamp on login ---
     if (typeof firebase !== "undefined" && firebase.auth) {
