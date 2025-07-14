@@ -1,37 +1,4 @@
-const isGuest = localStorage.getItem('cosmicai_guest') === 'true';
-
-// --- Guest Access Guard ---
-// If not logged in and not guest, redirect to login.html
-if (
-    !isGuest &&
-    !(typeof firebase !== "undefined" && firebase.auth && firebase.auth().currentUser)
-) {
-    window.location.replace("login.html");
-    // Stop further JS execution
-    throw new Error("Redirecting to login for unauthorized access.");
-}
-
-console.warn("You're Crossing the Limits. Better go back. - Cosmic AI");
-
 document.addEventListener("DOMContentLoaded", () => {
-    // --- Firebase initialization and auth check ---
-    let firebaseReady = typeof firebase !== "undefined" && typeof firebaseConfig !== "undefined";
-    if (firebaseReady && !firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
-    // Only check auth if not guest
-    if (!isGuest && firebaseReady) {
-        // Wait for Firebase Auth to be ready
-        firebase.auth().onAuthStateChanged(function(user) {
-            if (!user) {
-                window.location.replace("login.html");
-            }
-        });
-    } else if (!isGuest && !firebaseReady) {
-        // If not guest and Firebase is not ready, redirect
-        window.location.replace("login.html");
-    }
-
     // --- Gemini API code---
     /*
     const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY;
@@ -134,10 +101,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let userSearchHistory = []; // Array of { messages: [...] }
     let currentChatSession = []; // Array of { prompt: "...", reply: "..." }
 
-    // --- Guest Session Logic (all guest variables here, only once) ---
+    // --- Guest Session Logic ---
+    const isGuest = localStorage.getItem('cosmicai_guest') === 'true';
     let guestPromptCount = Number(localStorage.getItem('cosmicai_guest_prompts') || '0');
     let guestStartTime = Number(localStorage.getItem('cosmicai_guest_start') || '0');
     let guestHistory = JSON.parse(localStorage.getItem('cosmicai_guest_history') || '[]');
+
+    // Override userSearchHistory for guest
     if (isGuest) {
         window.userSearchHistory = guestHistory;
     }
@@ -553,7 +523,6 @@ async function saveUserSearchHistory() {
     const logoutButton = document.getElementById("logoutButton");
     if (logoutButton) {
         logoutButton.addEventListener("click", function() {
-            // Always call doLogout for both guest and user
             doLogout(false);
         });
     }
@@ -603,15 +572,15 @@ async function saveUserSearchHistory() {
     }
 });
 
-// --- Auto-logout after 4 hours of inactivity ---
-function checkAutoLogout() {
-    const loginTime = localStorage.getItem("cosmicai_login_time");
-    if (loginTime) {
-        const now = Date.now();
-        const fourHours = 4 * 60 * 60 * 1000;
-        if (now - parseInt(loginTime) > fourHours) {
-            alert("You have been automatically logged out due to inactivity. Please log in again.");
-            doLogout(true);
-        }
-    }
+// --- Guest Access Guard ---
+// If not logged in and not guest, redirect to login.html
+if (
+    !localStorage.getItem('cosmicai_guest') &&
+    !(typeof firebase !== "undefined" && firebase.auth && firebase.auth().currentUser)
+) {
+    window.location.replace("login.html");
+    // Stop further JS execution
+    throw new Error("Redirecting to login for unauthorized access.");
 }
+
+console.warn("You're Crossing the Limits. Better go back. - Cosmic AI");
