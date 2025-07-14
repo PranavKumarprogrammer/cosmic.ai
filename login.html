@@ -6,57 +6,9 @@
     <title>Login</title>
     <link rel="stylesheet" href="login.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" href="Cosmic AI.png" type="image/png">
     <!-- Three.js CDN for 3D background -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            overflow: hidden;
-            min-height: 100vh;
-            background-color: #050510;
-            color: #dededed7;
-        }
-        canvas#galaxyCanvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: -1;
-        }
-        .app-header {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%;
-            padding: 1rem 0;
-            text-align: center;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 5;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
-        }
-        .app-header h2 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            /* Gradient text styles */
-            background: linear-gradient(90deg, #6ea8ff 0%, #a084ee 50%, #c084fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-fill-color: transparent;
-            /* Glow effect */
-            text-shadow:
-                0 0 16px #a084ee,
-                0 0 32px #c084fc,
-                0 0 48px #6ea8ff,
-                0 0 2px rgba(168,202,255,0.7);
-            margin: 0;
-        }
-        /* Ensure main container is above the canvas */
-        .container {
-            position: relative;
-            z-index: 10;
-            margin-top: 5rem;
-        }
-    </style>
 </head>
 <body>
     <!-- Canvas for the 3D galaxy background -->
@@ -87,6 +39,12 @@
                     <a href="#" onclick="signInWithGoogle()"><i class='bx bxl-google' ></i></a>
                     <a href="#" onclick="signInWithGithub()"><i class='bx bxl-github' ></i></a>
                     <a href="#" onclick="signInWithMicrosoft()"><i class='bx bxl-microsoft' ></i></a>
+                </div>
+                <!-- Underlined guest link, styled via CSS -->
+                <div>
+                    <span id="guestLoginLink" class="guestLoginLink">
+                        Or Continue as Guest
+                    </span>
                 </div>
             </form>
         </div>
@@ -136,90 +94,6 @@
     <script src="config-file.js"></script>
     <script src="auth-check.js"></script>
     <script src="login.js"></script>
-    <script>
-        // --- 3D Galaxy Background (Three.js) ---
-        let scene, camera, renderer, stars, starGeo;
-        function initGalaxyBackground() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-            camera.position.z = 1;
-            camera.rotation.x = Math.PI / 2;
-            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('galaxyCanvas'), antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setClearColor(0x000000, 0);
-            starGeo = new THREE.BufferGeometry();
-            const positions = [];
-            const velocities = [];
-            const accelerations = [];
-            for (let i = 0; i < 6000; i++) {
-                positions.push(
-                    Math.random() * 600 - 300,
-                    Math.random() * 600 - 300,
-                    Math.random() * 600 - 300
-                );
-                velocities.push(0);
-                accelerations.push(0.02);
-            }
-            starGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-            starGeo.setAttribute('velocity', new THREE.Float32BufferAttribute(velocities, 1));
-            starGeo.setAttribute('acceleration', new THREE.Float32BufferAttribute(accelerations, 1));
-            const starMaterial = new THREE.PointsMaterial({
-                color: 0xffffff,
-                size: 1.5,
-                transparent: true,
-                opacity: 0.8,
-                map: createStarTexture(),
-                blending: THREE.AdditiveBlending
-            });
-            stars = new THREE.Points(starGeo, starMaterial);
-            scene.add(stars);
-            window.addEventListener('resize', onWindowResize, false);
-        }
-        function createStarTexture() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 16; canvas.height = 16;
-            const context = canvas.getContext('2d');
-            const gradient = context.createRadialGradient(
-                canvas.width / 2,
-                canvas.height / 2,
-                0,
-                canvas.width / 2,
-                canvas.height / 2,
-                canvas.width / 2
-            );
-            gradient.addColorStop(0, 'rgba(255,255,255,1)');
-            gradient.addColorStop(0.2, 'rgba(200,200,200,1)');
-            gradient.addColorStop(1, 'rgba(0,0,0,0)');
-            context.fillStyle = gradient;
-            context.fillRect(0, 0, canvas.width, canvas.height);
-            return new THREE.CanvasTexture(canvas);
-        }
-        function animateGalaxy() {
-            requestAnimationFrame(animateGalaxy);
-            const positions = starGeo.attributes.position.array;
-            const velocities = starGeo.attributes.velocity.array;
-            const accelerations = starGeo.attributes.acceleration.array;
-            for (let i = 0; i < positions.length; i += 3) {
-                velocities[i / 3] += accelerations[i / 3];
-                positions[i + 2] += velocities[i / 3];
-                if (positions[i + 2] > 200) {
-                    positions[i + 2] = -300;
-                    velocities[i / 3] = 0;
-                }
-            }
-            starGeo.attributes.position.needsUpdate = true;
-            stars.rotation.y += 0.0005;
-            renderer.render(scene, camera);
-        }
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            initGalaxyBackground();
-            animateGalaxy();
-        });
-    </script>
+    <script src="guest-login.js"></script>
 </body>
 </html>

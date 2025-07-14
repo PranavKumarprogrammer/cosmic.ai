@@ -1,26 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    
     <meta charset="UTF-8" />
-    
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cosmic AI</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font -->
+    <link rel="icon" href="Cosmic AI.png" type="image/png" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="main.css" />
   </head>
-
-
-
-  <!-- todo: MAKE SETTINGS FULLY WORKABLE OPTIONS AND ALSO 
-       todo: NEW CHAT WORKING.
-       todo: ADD A PROFILE AND ALL-->
 
   <body class="flex h-screen bg-gray-950 text-white galaxy-background">
     <!-- Starfield background -->
@@ -30,7 +24,7 @@
     <aside
       id="sidebar"
       class="sidebar sidebar-gemini collapsed w-24 sm:w-24 md:w-28 lg:w-72 flex flex-col items-center justify-between py-8 px-3 transition-all duration-300"
-      style="min-height: 100vh;"
+      style="min-height: 100vh"
       data-collapsed="true"
     >
       <!-- Top: Hamburger and New Chat -->
@@ -40,7 +34,7 @@
           class="flex items-center justify-center w-14 h-14 sidebar-toggle-expanded rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-accent mb-4"
           aria-label="Toggle Sidebar"
           type="button"
-          style="align-self: flex-start;"
+          style="align-self: flex-start"
         >
           <!-- Hamburger Icon -->
           <svg
@@ -78,15 +72,23 @@
               d="M12 6v6m0 0v6m0-6h6m-6 0H6"
             />
           </svg>
-          <span class="sidebar-label-text ml-3 font-medium hidden lg:inline">New Chat</span>
+          <span class="sidebar-label-text ml-3 font-medium hidden lg:inline"
+            >New Chat</span
+          >
         </button>
       </div>
 
       <!-- Divider -->
-      <div class="w-4/5 h-0.5 sidebar-divider my-6 rounded-full transition-all duration-300"></div>
+      <div
+        class="w-4/5 h-0.5 sidebar-divider my-6 rounded-full transition-all duration-300"
+      ></div>
 
       <!-- Sidebar History List (if you want to show it here) -->
-      <div id="sidebarHistoryList" class="w-full flex-1 overflow-y-auto px-2 py-2" style="display:none;">
+      <div
+        id="sidebarHistoryList"
+        class="w-full flex-1 overflow-y-auto px-2 py-2"
+        style="display: none"
+      >
         <!-- History items will be injected here -->
       </div>
 
@@ -112,7 +114,9 @@
               d="M11.25 2.25c.966 0 1.75.784 1.75 1.75v.5a7.5 7.5 0 013.5 1.45l.35-.35a1.75 1.75 0 112.475 2.475l-.35.35a7.5 7.5 0 011.45 3.5h.5a1.75 1.75 0 110 3.5h-.5a7.5 7.5 0 01-1.45 3.5l.35.35a1.75 1.75 0 11-2.475 2.475l-.35-.35a7.5 7.5 0 01-3.5 1.45v.5a1.75 1.75 0 11-3.5 0v-.5a7.5 7.5 0 01-3.5-1.45l-.35.35a1.75 1.75 0 11-2.475-2.475l.35-.35a7.5 7.5 0 01-1.45-3.5h-.5a1.75 1.75 0 110-3.5h.5a7.5 7.5 0 011.45-3.5l-.35-.35A1.75 1.75 0 115.8 5.6l.35.35A7.5 7.5 0 019.6 4.2v-.5c0-.966.784-1.75 1.75-1.75zM12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z"
             />
           </svg>
-          <span class="sidebar-label-text ml-3 font-medium hidden lg:inline">Settings</span>
+          <span class="sidebar-label-text ml-3 font-medium hidden lg:inline"
+            >Settings</span
+          >
         </button>
         <!-- Logout Button -->
         <button
@@ -120,10 +124,23 @@
           class="flex items-center justify-center w-full py-3 px-5 bg-gray-800 hover:bg-red-600 rounded-xl text-base transition-colors duration-200 shadow-md font-semibold sidebar-label transition-all duration-300 group mt-2"
         >
           <!-- Logout Icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
+            />
           </svg>
-          <span class="sidebar-label-text ml-3 font-medium hidden lg:inline">Logout</span>
+          <span class="sidebar-label-text ml-3 font-medium hidden lg:inline"
+            >Logout</span
+          >
         </button>
       </div>
     </aside>
@@ -187,7 +204,11 @@
       <div
         id="chatMessages"
         class="fixed left-1/2 -translate-x-1/2 bottom-16 w-[98vw] max-w-5xl mx-auto mb-2 bg-gray-900 bg-opacity-90 rounded-xl shadow-lg p-4 z-30 hidden custom-scrollbar"
-        style="transition: margin-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1); max-height: 75vh; overflow-y: auto;"
+        style="
+          transition: margin-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+          max-height: 75vh;
+          overflow-y: auto;
+        "
       ></div>
 
       <!-- Message display -->

@@ -216,3 +216,65 @@ form {
     box-shadow: none;
 }
 
+.guestLoginLink {
+    display: block;
+    text-align: center;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: 18px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.guestLoginLink:hover {
+    text-decoration: underline;
+    transform: scale(1.05);
+}
+
+
+canvas#galaxyCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
+
+.app-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 0;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 5;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.app-header h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    /* Gradient text styles */
+    background: linear-gradient(90deg, #6ea8ff 0%, #a084ee 50%, #c084fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    /* text-fill-color: transparent; */
+    /* Glow effect */
+    text-shadow:
+        0 0 16px #a084ee,
+        0 0 32px #c084fc,
+        0 0 48px #6ea8ff,
+        0 0 2px rgba(168, 202, 255, 0.7);
+    margin: 0;
+}
+
+/* Ensure main container is above the canvas */
+.container {
+    position: relative;
+    z-index: 10;
+    margin-top: 5rem;
+}
