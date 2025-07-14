@@ -127,18 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    // Guest Login Handler (external JS)
-    const guestLoginLink = document.getElementById('guestLoginLink');
-    if (guestLoginLink) {
-        guestLoginLink.addEventListener('click', () => {
-            localStorage.setItem('cosmicai_guest', 'true');
-            localStorage.setItem('cosmicai_guest_start', Date.now().toString());
-            localStorage.setItem('cosmicai_guest_prompts', '0');
-            localStorage.removeItem('cosmicai_login_time');
-            window.location.href = "main.html";
-        });
-    }
 });
 
 

@@ -1,4 +1,4 @@
-# 1. <span style="color:red">add image generation</span>
+# 1.  add image generation
 ## 2. minimalize the settings.
 ## 3. ~~NEW CHAT WORKING.~~
 ## 4. ADD A PROFILE 
@@ -8,6 +8,8 @@
 ## 8. ~~fix constant login problem~~
 ## 9. ~~search history logic~~
 ## 10. ~~Delete history option~~
-# 11. <span style="color:darkblue">delete temp1 after everything</span>
-## 12. ~~login logic in firebase~~
-## 13. guest login
+# 11.  delete temp1 after everything
+## 12. login logic in firebase
+## 13. ~~guest login~~
+## 14. Fix microsoft login option
+## 15. improve overall UI/UX
