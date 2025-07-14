@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             messages: [
                 {
                     role: "system",
-                    content: `Your name is Cosmic AI, an intelligent assistant built for answering questions about space. Do not mention "Mistral" or refer to yourself using any other name or model type. Always act as Cosmic AI. Stay concise, friendly, and always answer as Cosmic AI. You're Created by Alan Betty, A Frontend Developer`
+                    content: `Your name is Cosmic AI, an intelligent assistant built for answering questions about space. Do not mention "Mistral" or "Google" or refer to yourself using any other name or model type. Always act as Cosmic AI. Stay concise, friendly, and always answer as Cosmic AI. You're Created by "Alan Betty" And "Light."`
                 },
                 {
                     role: "user",
@@ -505,6 +505,13 @@ async function saveUserSearchHistory() {
         }
     }
     setInterval(checkGuestTimeout, 60000); // Check every minute
+
+    // --- Add checkAutoLogout stub to prevent ReferenceError ---
+    if (typeof checkAutoLogout !== "function") {
+        function checkAutoLogout() {
+            // No-op: implement auto-logout logic here if needed
+        }
+    }
 
     // --- Set login timestamp on login ---
     if (typeof firebase !== "undefined" && firebase.auth) {
