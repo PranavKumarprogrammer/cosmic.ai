@@ -110,6 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Override userSearchHistory for guest
     if (isGuest) {
         window.userSearchHistory = guestHistory;
+        // Hide logout button text (optional)
+        const logoutButton = document.getElementById("logoutButton");
+        if (logoutButton) logoutButton.textContent = "Logout (Guest)";
     }
 
     // --- Firestore setup: block for guest ---
@@ -571,16 +574,5 @@ async function saveUserSearchHistory() {
         });
     }
 });
-
-// --- Guest Access Guard ---
-// If not logged in and not guest, redirect to login.html
-if (
-    !localStorage.getItem('cosmicai_guest') &&
-    !(typeof firebase !== "undefined" && firebase.auth && firebase.auth().currentUser)
-) {
-    window.location.replace("login.html");
-    // Stop further JS execution
-    throw new Error("Redirecting to login for unauthorized access.");
-}
 
 console.warn("You're Crossing the Limits. Better go back. - Cosmic AI");

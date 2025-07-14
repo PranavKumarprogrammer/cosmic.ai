@@ -10,5 +10,4 @@
 ## 10. ~~Delete history option~~
 # 11. <span style="color:darkblue">delete temp1 after everything</span>
 ## 12. ~~login logic in firebase~~
-## 13. ~~guest login~~
-## 14. Fix microsoft login option
+## 13. guest login
