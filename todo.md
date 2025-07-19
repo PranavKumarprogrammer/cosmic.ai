@@ -13,7 +13,6 @@
 ## 13. ~~guest login~~
 ## 14. ~~Fix microsoft login option~~
 ## 15. improve overall UI/UX
-## 16. Add an auto scroll function
+## 16. ~~Add an auto scroll function~~
 ## 17. ~~fix github login~~
-## 18. fix bugs
-## 19. fix the typewriter effect in the index
+## 18. ~~fix the typewriter effect in the index~~

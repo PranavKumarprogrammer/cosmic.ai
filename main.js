@@ -237,9 +237,17 @@ async function saveUserSearchHistory() {
         wrapper.appendChild(bubble);
         chatMessages.appendChild(wrapper);
 
-        // Always scroll to bottom
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        // Smooth scroll to bottom
+        setTimeout(smoothScrollChatMessages, 0);
+
         return bubble;
+    }
+
+    function smoothScrollChatMessages() {
+        chatMessages.scrollTo({
+            top: chatMessages.scrollHeight,
+            behavior: "smooth"
+        });
     }
 
     // --- Add escapeHTML function if not present ---
@@ -374,6 +382,8 @@ async function saveUserSearchHistory() {
         if (placeholder) placeholder.remove();
         appendChatMessage("You", msg, "user");
         chatInput.value = "";
+        // Ensure scroll after user message
+        smoothScrollChatMessages();
 
         // If the message starts with "/image ", treat as image generation
         if (msg.toLowerCase().startsWith("/image ")) {
@@ -389,6 +399,7 @@ async function saveUserSearchHistory() {
                 currentChatSession[currentChatSession.length - 1].reply = `[Image] ${imageUrl}`;
                 userSearchHistory[userSearchHistory.length - 1].messages = [...currentChatSession];
                 saveUserSearchHistory();
+                smoothScrollChatMessages();
             } catch (err) {
                 botMsgDiv.classList.remove("italic");
                 botMsgDiv.innerHTML =
@@ -397,6 +408,7 @@ async function saveUserSearchHistory() {
                 currentChatSession[currentChatSession.length - 1].reply = `Error: ${err.message}`;
                 userSearchHistory[userSearchHistory.length - 1].messages = [...currentChatSession];
                 saveUserSearchHistory();
+                smoothScrollChatMessages();
             }
             return;
         }
@@ -412,11 +424,13 @@ async function saveUserSearchHistory() {
                 currentChatSession[currentChatSession.length - 1].reply = reply;
                 userSearchHistory[userSearchHistory.length - 1].messages = [...currentChatSession];
                 saveUserSearchHistory();
+                smoothScrollChatMessages();
             } else {
                 botMsgDiv.innerHTML = `<span class="font-bold text-gray-300">Cosmic AI:</span> <span>Sorry, I couldn't get a response from Cosmic AI.</span>`;
                 currentChatSession[currentChatSession.length - 1].reply = "Sorry, I couldn't get a response from Cosmic AI.";
                 userSearchHistory[userSearchHistory.length - 1].messages = [...currentChatSession];
                 saveUserSearchHistory();
+                smoothScrollChatMessages();
             }
         } catch (err) {
             botMsgDiv.classList.remove("italic");
@@ -428,6 +442,7 @@ async function saveUserSearchHistory() {
             currentChatSession[currentChatSession.length - 1].reply = errMsg;
             userSearchHistory[userSearchHistory.length - 1].messages = [...currentChatSession];
             saveUserSearchHistory();
+            smoothScrollChatMessages();
         }
 
         // --- Guest prompt limit and time check ---
