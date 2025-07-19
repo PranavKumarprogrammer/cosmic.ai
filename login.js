@@ -102,8 +102,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem("cosmicai_login_time", Date.now().toString());
                 window.location.href = "main.html";
             } catch (error) {
-                console.error('Registration error:', error);
-                alert(error.message);
+                // Handle disabled email/password provider
+                if (error.code === 'auth/operation-not-allowed') {
+                    alert("Email/password login is currently disabled for this app. Please enable 'Email/Password' in your Firebase project's Authentication > Sign-in method settings.");
+                } else {
+                    console.error('Registration error:', error);
+                    alert(error.message);
+                }
             }
         });
     }
@@ -122,8 +127,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem("cosmicai_login_time", Date.now().toString());
                 window.location.href = "main.html";
             } catch (error) {
-                console.error('Login error:', error);
-                alert(error.message);
+                // Handle disabled email/password provider
+                if (error.code === 'auth/operation-not-allowed') {
+                    alert("Email/password login is currently disabled for this app. Please enable 'Email/Password' in your Firebase project's Authentication > Sign-in method settings.");
+                } else {
+                    console.error('Login error:', error);
+                    alert(error.message);
+                }
             }
         });
     }
