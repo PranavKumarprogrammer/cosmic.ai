@@ -33,7 +33,11 @@
         }
         firebase.auth().onAuthStateChanged(function(user) {
             clearTimeout(failTimeout);
+            const isMainPage = /main\.html$/i.test(window.location.pathname);
+            // FIX: Allow anonymous users on main.html
             if (!user) {
+                window.location.replace("login.html");
+            } else if (!isMainPage && user.isAnonymous) {
                 window.location.replace("login.html");
             } else {
                 showPage();

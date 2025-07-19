@@ -9,11 +9,11 @@
 ## 9. ~~search history logic~~
 ## 10. ~~Delete history option~~
 # 11.  delete temp1 after everything
-## 12. login logic in firebase
+## 12. ~~login logic in firebase~~
 ## 13. ~~guest login~~
-## 14. Fix microsoft login option
+## 14. ~~Fix microsoft login option~~
 ## 15. improve overall UI/UX
 ## 16. Add an auto scroll function
-## 17. fix github login
+## 17. ~~fix github login~~
 ## 18. fix bugs
 ## 19. fix the typewriter effect in the index
