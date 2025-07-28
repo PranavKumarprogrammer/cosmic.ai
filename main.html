@@ -260,10 +260,6 @@
 
         <!-- Scrollable content area for settings -->
         <div
-          class="space-y-6 text-gray-300 overflow-y-auto max-h-[calc(80vh-120px)] pr-2 custom-scrollbar"
-        >
-          <!-- Theme Selector -->
-          <div
             class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200"
           >
             <h3 class="text-xl font-semibold mb-3">Appearance</h3>
@@ -278,42 +274,16 @@
               <option value="deep-nebula">Deep Nebula (Blue/Purple)</option>
               <option value="crimson-cosmos">Crimson Cosmos (Red/Gold)</option>
             </select>
-          </div>
-
-          <!-- AI Behavior Settings -->
-          <div
-            class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200"
-          >
-            <h3 class="text-xl font-semibold mb-3">AI Behavior</h3>
-            <div>
-              <label for="ai-verbosity" class="block text-gray-400 mb-2"
-                >AI Response Verbosity:</label
-              >
-              <select
-                id="ai-verbosity"
-                class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200"
-              >
-                <option value="terse">Terse</option>
-                <option value="standard">Standard</option>
-                <option value="verbose">Verbose</option>
-              </select>
-            </div>
-            <div class="mt-4">
-              <label for="typing-speed" class="block text-gray-400 mb-2"
-                >Search Bar Typing Speed:</label
+            <div class="flex items-center mt-4">
+              <label for="floating-title-toggle" class="text-gray-400 mr-3"
+                >Animated Title Effect:</label
               >
               <input
-                type="range"
-                id="typing-speed"
-                min="50"
-                max="300"
-                step="10"
-                value="150"
-                class="w-full h-2 rounded-lg appearance-none cursor-pointer range-slider focus:outline-none focus:ring-2"
+                type="checkbox"
+                id="floating-title-toggle"
+                checked
+                class="custom-checkbox"
               />
-              <span id="currentSpeed" class="text-sm text-gray-400"
-                >Current Speed: 150ms/char (Lower is Faster)</span
-              >
             </div>
           </div>
 
@@ -332,65 +302,6 @@
                 checked
                 class="custom-checkbox"
               />
-            </div>
-          </div>
-
-          <!-- Data Preferences -->
-          <div
-            class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200"
-          >
-            <h3 class="text-xl font-semibold mb-3">Data Preferences</h3>
-            <p class="text-gray-400 mb-2">
-              Configure data usage and privacy settings.
-            </p>
-            <div class="flex items-center mt-3">
-              <input
-                type="checkbox"
-                id="telemetry-toggle"
-                class="custom-checkbox"
-              />
-              <label for="telemetry-toggle" class="ml-2 text-gray-300"
-                >Enable Telemetry Data</label
-              >
-            </div>
-            <div class="flex items-center mt-2">
-              <input
-                type="checkbox"
-                id="history-toggle"
-                checked
-                class="custom-checkbox"
-              />
-              <label for="history-toggle" class="ml-2 text-gray-300"
-                >Save Search History</label
-              >
-            </div>
-          </div>
-
-          <!-- Notifications Settings -->
-          <div
-            class="p-4 bg-gray-800 rounded-lg border border-gray-700 shadow-inner hover:border-gray-600 transition-colors duration-200"
-          >
-            <h3 class="text-xl font-semibold mb-3">Notifications</h3>
-            <p class="text-gray-400 mb-2">Manage how Cosmic AI notifies you.</p>
-            <div class="flex items-center mt-3">
-              <input
-                type="checkbox"
-                id="email-notif-toggle"
-                class="custom-checkbox"
-              />
-              <label for="email-notif-toggle" class="ml-2 text-gray-300"
-                >Email Notifications</label
-              >
-            </div>
-            <div class="flex items-center mt-2">
-              <input
-                type="checkbox"
-                id="inapp-notif-toggle"
-                class="custom-checkbox"
-              />
-              <label for="inapp-notif-toggle" class="ml-2 text-gray-300"
-                >In-App Alerts</label
-              >
             </div>
           </div>
 

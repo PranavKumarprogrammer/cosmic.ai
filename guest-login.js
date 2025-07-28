@@ -22,6 +22,7 @@
                             localStorage.setItem('cosmicai_guest_history', '[]');
                             localStorage.removeItem('cosmicai_login_time');
                             window.location.href = "main.html";
+                            
                         }
                     });
                 } else {
