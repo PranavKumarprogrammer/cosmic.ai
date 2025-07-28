@@ -33,7 +33,7 @@ const themeConfigs = {
         modalButtonFocusRing: 'focus:ring-blue-500'
     },
     'crimson-cosmos': {
-        titleGradient: 'from-red-400 to-yellow-600',
+        titleGradient: 'from-red-600 to-purple-800',
         accentButtonBg: 'bg-red-700',
         accentButtonHoverBg: 'hover:bg-red-800',
         accentButtonFocusRing: 'focus:ring-red-500',
@@ -71,7 +71,7 @@ let showHistoryModal = false; // State for history modal visibility
 let isMainContentMinimized = false; // State for main content minimization
 
 // Settings options
-let currentThemeName = 'nebula-flare';
+let currentThemeName = 'crimson-cosmos';
 let typingSpeedPreference = 150; // Default typing speed
 let isFloatingTitleEnabled = true;
 let isSearchHistorySaved = true; // Default to true
@@ -460,6 +460,9 @@ if (settingsButton) {
         if (themeSelect) themeSelect.value = currentThemeName;
         if (floatingTitleToggle) floatingTitleToggle.checked = isFloatingTitleEnabled;
         if (historyToggle) historyToggle.checked = isSearchHistorySaved;
+        // NEW: Sync starfield toggle state when modal opens
+        const starfieldToggle = document.getElementById('starfield-toggle');
+        if (starfieldToggle) starfieldToggle.checked = isStarfieldEnabled;
         applyTheme(); // Re-apply theme to update modal specific colors
     });
 }
@@ -559,6 +562,16 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTheme(); // Apply initial theme
     // Set initial checkbox states based on variables
     historyToggle.checked = isSearchHistorySaved;
+    // NEW: Initialize starfield toggle state
+    const starfieldToggle = document.getElementById('starfield-toggle');
+    if (starfieldToggle) {
+        starfieldToggle.checked = isStarfieldEnabled;
+        starfieldToggle.addEventListener('change', (e) => {
+            isStarfieldEnabled = e.target.checked;
+            updateStarfield();
+        });
+    }
+    updateStarfield(); // Start starfield if enabled initially
     toggleMainContentMinimization(); // Apply initial minimization state (default maximized)
     setTimeout(renderSidebarHistory, 0);
 });
@@ -801,19 +814,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add toggle to settings modal if not present
     let starfieldToggle = document.getElementById('starfield-toggle');
-    if (!starfieldToggle) {
-        // Find a good place in the settings modal (after floating title toggle)
-        const animDiv = document.querySelector('#settingsModal .p-4.bg-gray-800.rounded-lg.border');
-        if (animDiv) {
-            const wrapper = document.createElement('div');
-            wrapper.className = "flex items-center mt-4";
-            wrapper.innerHTML = `
-                        <label for="starfield-toggle" class="text-gray-400 mr-3">Animated Starfield Background:</label>
-                        <input type="checkbox" id="starfield-toggle" class="custom-checkbox" ${isStarfieldEnabled ? "checked" : ""}>
-                    `;
-            animDiv.appendChild(wrapper);
-        }
-    }
+    
     // Listen for toggle changes
     starfieldToggle = document.getElementById('starfield-toggle');
     if (starfieldToggle) {
