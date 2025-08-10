@@ -9,6 +9,27 @@
     <link rel="icon" href="Cosmic AI.png" type="image/png">
     <!-- Three.js CDN for 3D background -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @media (max-width: 900px) {
+            .container { width: 98vw !important; }
+        }
+        @media (max-width: 700px) {
+            .container { width: 100vw !important; height: auto !important; min-height: 100vh !important; border-radius: 0 !important; margin: 0 !important; }
+            .form-box, .toggle-panel { width: 100% !important; padding: 20px 10px !important; }
+            .toggle-box { display: none !important; }
+            .form-box { position: static !important; }
+        }
+        @media (max-width: 480px) {
+            .container { width: 100vw !important; min-width: 0 !important; }
+            .form-box, .toggle-panel { padding: 10px 2vw !important; }
+            .app-header h2 { font-size: 1.3rem !important; }
+            .btn { font-size: 1rem !important; }
+        }
+        @media (max-width: 350px) {
+            .container { width: 100vw !important; }
+            .form-box, .toggle-panel { padding: 2vw !important; }
+        }
+    </style>
 </head>
 <body>
     <!-- Canvas for the 3D galaxy background -->

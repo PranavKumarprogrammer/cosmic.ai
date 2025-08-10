@@ -278,3 +278,35 @@ canvas#galaxyCanvas {
     z-index: 10;
     margin-top: 5rem;
 }
+
+/* Responsive styles */
+@media (max-width: 900px) {
+    .container { width: 98vw !important; }
+}
+@media (max-width: 700px) {
+    .container {
+        width: 100vw !important;
+        height: auto !important;
+        min-height: 100vh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+    .form-box, .toggle-panel {
+        width: 100% !important;
+        padding: 20px 10px !important;
+    }
+    .toggle-box { display: none !important; }
+    .form-box { position: static !important; }
+}
+@media (max-width: 480px) {
+    .container { width: 100vw !important; min-width: 0 !important; }
+    .form-box, .toggle-panel { padding: 10px 2vw !important; }
+    .app-header h2 { font-size: 1.3rem !important; }
+    .btn { font-size: 1rem !important; }
+    .input-box input { font-size: 14px !important; }
+}
+@media (max-width: 350px) {
+    .container { width: 100vw !important; }
+    .form-box, .toggle-panel { padding: 2vw !important; }
+}
