@@ -213,7 +213,7 @@ async function saveUserSearchHistory() {
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("searchInput");
     const chatMessages = document.getElementById("chatMessages");
-    const clearHistoryButton = document.getElementById("clearHistoryButton"); // <-- add here
+    const clearHistoryButton = document.getElementById("clearHistoryButton");
     const newChatButton = document.getElementById("newChatButton"); // Add reference
 
     // Guard: if any required element is missing, do nothing
