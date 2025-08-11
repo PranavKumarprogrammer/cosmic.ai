@@ -20,98 +20,99 @@
     <!-- Starfield background -->
     <div id="starsBg" class="stars-bg"></div>
 
-    <!-- Sidebar -->
+    <!-- Sidebar (desktop & mobile hamburger) -->
     <aside
       id="sidebar"
-      class="sidebar sidebar-gemini collapsed w-24 sm:w-24 md:w-28 lg:w-72 flex flex-col items-center justify-between py-8 px-3 transition-all duration-300"
+      class="sidebar sidebar-gemini collapsed w-16 sm:w-16 md:w-20 lg:w-72 flex flex-col items-center justify-between py-8 px-3 transition-all duration-300 fixed lg:static z-40"
       style="min-height: 100vh"
       data-collapsed="true"
     >
-      <!-- Top: Hamburger and New Chat -->
-      <div class="flex flex-col items-center w-full">
-        <button
-          id="toggleViewButton"
-          class="flex items-center justify-center w-14 h-14 sidebar-toggle-expanded rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-accent mb-4"
-          aria-label="Toggle Sidebar"
-          type="button"
-          style="align-self: flex-start"
-        >
-          <!-- Hamburger Icon -->
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-7 w-7"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-        <!-- New Chat Button directly below hamburger -->
-        <button
-          id="newChatButton"
-          class="flex items-center justify-center w-full py-3 px-5 bg-accent hover:bg-accent rounded-xl text-base transition-colors duration-200 shadow-md font-semibold sidebar-label transition-all duration-300 group"
-        >
-          <!-- Plus Icon -->
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-          <span class="sidebar-label-text ml-3 font-medium hidden lg:inline"
-            >New Chat</span
-          >
-        </button>
-      </div>
-
-      <!-- Divider -->
-      <div
-        class="w-4/5 h-0.5 sidebar-divider my-6 rounded-full transition-all duration-300"
-      ></div>
-
-      <!-- Sidebar History List (if you want to show it here) -->
-      <div
-        id="sidebarHistoryList"
-        class="w-full flex-1 overflow-y-auto px-2 py-2"
-        style="display: none"
+      <!-- Hamburger always visible -->
+      <button
+        id="toggleViewButton"
+        class="flex items-center justify-center w-14 h-14 sidebar-toggle-expanded rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-accent mb-4"
+        aria-label="Toggle Sidebar"
+        type="button"
+        style="align-self: flex-start"
       >
-        <!-- History items will be injected here -->
-      </div>
-
-      <!-- Bottom: Settings -->
-      <div class="flex flex-col items-center w-full space-y-4 mb-2">
-        <!-- Settings Button -->
-        <button
-          id="settingsButton"
-          class="flex items-center justify-center w-full py-3 px-5 bg-gray-800 hover:bg-accent rounded-xl text-base transition-colors duration-200 shadow-md font-semibold sidebar-label transition-all duration-300 group"
+        <!-- Hamburger Icon -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-7 w-7"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
         >
-          <!-- Settings (Cog) Icon -->
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+      <!-- Sidebar content (hidden on mobile until open) -->
+      <div id="sidebarContent" class="sidebar-content hidden lg:flex flex-col items-center justify-between w-full h-full">
+        <!-- Top: New Chat Button -->
+        <div class="flex flex-col items-center w-full">
+          <!-- New Chat Button directly below hamburger -->
+          <button
+            id="newChatButton"
+            class="flex items-center justify-center w-full py-3 px-5 bg-accent hover:bg-accent rounded-xl text-base transition-colors duration-200 shadow-md font-semibold sidebar-label transition-all duration-300 group"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M11.25 2.25c.966 0 1.75.784 1.75 1.75v.5a7.5 7.5 0 013.5 1.45l.35-.35a1.75 1.75 0 112.475 2.475l-.35.35a7.5 7.5 0 011.45 3.5h.5a1.75 1.75 0 110 3.5h-.5a7.5 7.5 0 01-1.45 3.5l.35.35a1.75 1.75 0 11-2.475 2.475l-.35-.35a7.5 7.5 0 01-3.5 1.45v.5a1.75 1.75 0 11-3.5 0v-.5a7.5 7.5 0 01-3.5-1.45l-.35.35a1.75 1.75 0 11-2.475-2.475l.35-.35a7.5 7.5 0 01-1.45-3.5h-.5a1.75 1.75 0 110-3.5h.5a7.5 7.5 0 011.45-3.5l-.35-.35A1.75 1.75 0 115.8 5.6l.35.35A7.5 7.5 0 019.6 4.2v-.5c0-.966.784-1.75 1.75-1.75zM12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z"
+            <!-- Plus Icon -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            <span class="sidebar-label-text ml-3 font-medium hidden lg:inline"
+              >New Chat</span
+            >
+          </button>
+        </div>
+        <!-- Divider -->
+        <div
+          class="w-4/5 h-0.5 sidebar-divider my-6 rounded-full transition-all duration-300"
+        ></div>
+        <!-- Sidebar History List (if you want to show it here) -->
+        <div
+          id="sidebarHistoryList"
+          class="w-full flex-1 overflow-y-auto px-2 py-2"
+          style="display: none"
+        >
+          <!-- History items will be injected here -->
+        </div>
+
+        <!-- Bottom: Settings -->
+        <div class="flex flex-col items-center w-full space-y-4 mb-2">
+          <!-- Settings Button -->
+          <button
+            id="settingsButton"
+            class="flex items-center justify-center w-full py-3 px-5 bg-gray-800 hover:bg-accent rounded-xl text-base transition-colors duration-200 shadow-md font-semibold sidebar-label transition-all duration-300 group"
+          >
+            <!-- Settings (Cog) Icon -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M11.25 2.25c.966 0 1.75.784 1.75 1.75v.5a7.5 7.5 0 013.5 1.45l.35-.35a1.75 1.75 0 112.475 2.475l-.35.35a7.5 7.5 0 011.45 3.5h.5a1.75 1.75 0 110 3.5h-.5a7.5 7.5 0 01-1.45 3.5l.35.35a1.75 1.75 0 11-2.475 2.475l-.35-.35a7.5 7.5 0 01-3.5 1.45v.5a1.75 1.75 0 11-3.5 0v-.5a7.5 7.5 0 01-3.5-1.45l-.35.35a1.75 1.75 0 11-2.475-2.475l.35-.35a7.5 7.5 0 01-1.45-3.5h-.5a1.75 1.75 0 110-3.5h.5a7.5 7.5 0 011.45-3.5l-.35-.35A1.75 1.75 0 115.8 5.6l.35.35A7.5 7.5 0 019.6 4.2v-.5c0-.966.784-1.75 1.75-1.75zM12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z"
             />
           </svg>
           <span class="sidebar-label-text ml-3 font-medium hidden lg:inline"
@@ -143,44 +144,55 @@
           >
         </button>
       </div>
+      <!-- Mobile sidebar overlay/backdrop -->
+      <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex flex-col items-center justify-start pt-8 px-4 hidden lg:hidden">
+        <div class="w-full flex justify-end mb-4">
+          <button id="closeSidebarOverlay" class="text-gray-300 hover:text-white text-3xl p-2 rounded focus:outline-none">
+            &times;
+          </button>
+        </div>
+        <div class="sidebar-content-mobile w-full flex flex-col items-center">
+          <!-- Sidebar content will be cloned here by JS -->
+        </div>
+      </div>
     </aside>
 
     <!-- Main Content -->
     <main
       id="mainContent"
-      class="flex-1 flex flex-col items-center pt-20 px-4 md:px-8 lg:px-16 overflow-auto bg-gradient-to-br from-black via-blue-950 to-black main-content-maximized"
+      class="flex-1 flex flex-col items-center pt-20 px-2 sm:px-4 md:px-8 lg:px-16 overflow-auto bg-gradient-to-br from-black via-blue-950 to-black main-content-maximized"
     >
       <!-- Cosmic AI Title -->
       <h1
         id="cosmicAITitle"
-        class="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-10 md:mb-16 text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-blue-700 tracking-tight drop-shadow-lg animate-float"
+        class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold mb-8 md:mb-16 text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-blue-700 tracking-tight drop-shadow-lg animate-float"
       >
         Cosmic AI
       </h1>
 
-      <!-- Wrap your search bar in a form for chat submit -->
+      <!-- Chat Form -->
       <form
         id="chatForm"
-        class="w-full max-w-xl md:max-w-2xl"
+        class="w-full max-w-full sm:max-w-xl md:max-w-2xl"
         style="transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1)"
       >
         <!-- Search Bar -->
         <div
           id="searchBar"
-          class="bg-gray-800 rounded-full flex items-center px-6 py-3 shadow-2xl border border-blue-800 hover:border-orange-500 transition-all duration-300"
+          class="bg-gray-800 rounded-full flex items-center px-4 sm:px-6 py-3 shadow-2xl border border-blue-800 hover:border-orange-500 transition-all duration-300"
         >
           <input
             type="text"
             id="searchInput"
             placeholder=""
-            class="flex-1 bg-transparent border-none outline-none text-white text-lg md:text-xl placeholder-gray-500"
+            class="flex-1 bg-transparent border-none outline-none text-white text-base sm:text-lg md:text-xl placeholder-gray-500"
             autocomplete="off"
           />
-          <!-- Only one send button, with a send icon -->
+          <!-- Send button -->
           <button
             id="sendButton"
             type="submit"
-            class="bg-orange-600 hover:bg-orange-700 rounded-full p-2 ml-4 transition-colors duration-200 shadow-md flex items-center justify-center"
+            class="bg-orange-600 hover:bg-orange-700 rounded-full p-2 ml-2 sm:ml-4 transition-colors duration-200 shadow-md flex items-center justify-center"
           >
             <!-- Send icon (paper plane) -->
             <svg
@@ -200,17 +212,16 @@
           </button>
         </div>
       </form>
-      <!-- Move chatMessages OUTSIDE the form and make it fixed at the bottom above the chatForm -->
+      <!-- Chat Messages (responsive) -->
       <div
         id="chatMessages"
-        class="fixed left-1/2 -translate-x-1/2 bottom-16 w-[98vw] max-w-5xl mx-auto mb-2 bg-gray-900 bg-opacity-90 rounded-xl shadow-lg p-4 z-30 hidden custom-scrollbar"
+        class="fixed left-1/2 -translate-x-1/2 bottom-20 sm:bottom-16 w-[98vw] max-w-full sm:max-w-5xl mx-auto mb-2 bg-gray-900 bg-opacity-90 rounded-xl shadow-lg p-2 sm:p-4 z-30 hidden custom-scrollbar"
         style="
           transition: margin-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-          max-height: 75vh;
+          max-height: 60vh;
           overflow-y: auto;
         "
       ></div>
-
       <!-- Message display -->
       <div
         id="messageDisplay"

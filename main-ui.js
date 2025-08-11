@@ -107,6 +107,10 @@ const historyList = document.getElementById('historyList');
 const noHistoryMessage = document.getElementById('noHistoryMessage');
 const sidebar = document.getElementById('sidebar');
 const sidebarHistoryList = document.getElementById('sidebarHistoryList');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const sidebarContent = document.getElementById('sidebarContent');
+const sidebarContentMobile = document.querySelector('.sidebar-content-mobile');
+const closeSidebarOverlay = document.getElementById('closeSidebarOverlay');
 
 
 // --- Functions to Update UI ---
@@ -336,28 +340,108 @@ function renderSidebarHistory() {
 }
 window.renderSidebarHistory = renderSidebarHistory;
 
-// Sidebar expand/collapse logic
-if (toggleViewButton && sidebar) {
-    toggleViewButton.addEventListener('click', () => {
-        const isCollapsed = sidebar.classList.toggle('collapsed');
-        sidebar.setAttribute('data-collapsed', isCollapsed ? "true" : "false");
-        setTimeout(renderSidebarHistory, 0);
+// --- Mobile Sidebar Overlay Logic (from scratch) ---
 
-        // Align hamburger to left when expanded, center when collapsed
-        if (!isCollapsed) {
-            toggleViewButton.style.alignSelf = "flex-start";
-        } else {
-            toggleViewButton.style.alignSelf = "center";
-        }
-    });
+function isMobileSidebar() {
+    return window.innerWidth < 1024; // Match your CSS breakpoint (lg)
+}
 
-    // On load, ensure correct alignment
-    if (!sidebar.classList.contains('collapsed')) {
-        toggleViewButton.style.alignSelf = "flex-start";
-    } else {
-        toggleViewButton.style.alignSelf = "center";
+function openSidebarOverlay() {
+    if (!sidebarOverlay || !sidebarContent || !sidebarContentMobile) return;
+    // Copy sidebar content HTML into overlay for mobile
+    sidebarContentMobile.innerHTML = sidebarContent.innerHTML;
+    sidebarOverlay.classList.add('active');
+    sidebarOverlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // Re-attach event listeners for cloned buttons in overlay
+    const overlayNewChatButton = sidebarContentMobile.querySelector('#newChatButton');
+    if (overlayNewChatButton) {
+        overlayNewChatButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof newChatButton !== "undefined" && newChatButton.click) {
+                newChatButton.click();
+            } else if (window.location) {
+                window.location.reload();
+            }
+            closeSidebarOverlayHandler();
+        });
+    }
+    const overlaySettingsButton = sidebarContentMobile.querySelector('#settingsButton');
+    if (overlaySettingsButton) {
+        overlaySettingsButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof settingsButton !== "undefined" && settingsButton.click) {
+                settingsButton.click();
+            }
+            closeSidebarOverlayHandler();
+        });
+    }
+    const overlayLogoutButton = sidebarContentMobile.querySelector('#logoutButton');
+    if (overlayLogoutButton) {
+        overlayLogoutButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof logoutButton !== "undefined" && logoutButton.click) {
+                logoutButton.click();
+            } else if (typeof doLogout === "function") {
+                doLogout(false);
+            }
+            closeSidebarOverlayHandler();
+        });
     }
 }
+
+function closeSidebarOverlayHandler() {
+    if (!sidebarOverlay) return;
+    sidebarOverlay.classList.remove('active');
+    sidebarOverlay.classList.add('hidden');
+    document.body.style.overflow = '';
+    if (sidebarContentMobile) sidebarContentMobile.innerHTML = '';
+}
+
+// Remove all previous listeners to avoid duplicates
+if (toggleViewButton) {
+    toggleViewButton.onclick = null;
+    toggleViewButton.addEventListener('click', function(e) {
+        if (isMobileSidebar()) {
+            openSidebarOverlay();
+        } else {
+            // Desktop: toggle collapse
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            sidebar.setAttribute('data-collapsed', isCollapsed ? "true" : "false");
+            setTimeout(renderSidebarHistory, 0);
+            toggleViewButton.style.alignSelf = isCollapsed ? "center" : "flex-start";
+            // Show sidebar content on desktop
+            if (sidebarContent) sidebarContent.classList.toggle('hidden', isCollapsed);
+        }
+    });
+}
+
+// Overlay close button
+if (closeSidebarOverlay) {
+    closeSidebarOverlay.onclick = null;
+    closeSidebarOverlay.addEventListener('click', closeSidebarOverlayHandler);
+}
+
+// Click on backdrop closes overlay
+if (sidebarOverlay) {
+    sidebarOverlay.onclick = null;
+    sidebarOverlay.addEventListener('click', function(e) {
+        if (e.target === sidebarOverlay) closeSidebarOverlayHandler();
+    });
+}
+
+// On resize, close overlay if switching to desktop, and restore sidebarContent
+window.addEventListener('resize', () => {
+    if (!isMobileSidebar()) {
+        closeSidebarOverlayHandler();
+        if (sidebarContent) sidebarContent.classList.remove('hidden');
+    } else {
+        if (sidebarContent) sidebarContent.classList.add('hidden');
+    }
+});
+
+// --- Functions to Update UI (continued) ---
 
 // --- Fix: Ensure toggleFloatingTitle is defined ---
 function toggleFloatingTitle() {
@@ -561,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleFloatingTitle();
     applyTheme(); // Apply initial theme
     // Set initial checkbox states based on variables
-    historyToggle.checked = isSearchHistorySaved;
+    // historyToggle.checked = isSearchHistorySaved;
     // NEW: Initialize starfield toggle state
     const starfieldToggle = document.getElementById('starfield-toggle');
     if (starfieldToggle) {
@@ -837,6 +921,10 @@ if (settingsButton) {
     });
 }
 
+// Focus on search input if not in cross-origin iframe
+if (window.top === window.self) {
+    searchInput.focus();
+}
 // Focus on search input if not in cross-origin iframe
 if (window.top === window.self) {
     searchInput.focus();

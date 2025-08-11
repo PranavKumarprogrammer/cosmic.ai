@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             messages: [
                 {
                     role: "system",
-                    content: `Your name is Cosmic AI, an intelligent assistant built for answering questions about space. Do not mention "Mistral" or "Google" or refer to yourself using any other name or model type. Always act as Cosmic AI. Stay concise, friendly, and always answer as Cosmic AI. You're Created by "Alan Betty" And "Light."`
+                    content: `Your name is Cosmic AI, an intelligent assistant built for answering questions about space. Do not mention "Mistral" or "Google" or refer to yourself using any other name or model type. Always act as Cosmic AI. Stay concise, friendly, and always answer as Cosmic AI. You're Created by "Alan Betty" And "Pranav."`
                 },
                 {
                     role: "user",
@@ -213,7 +213,7 @@ async function saveUserSearchHistory() {
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("searchInput");
     const chatMessages = document.getElementById("chatMessages");
-    const clearHistoryButton = document.getElementById("clearHistoryButton"); // <-- add here
+    const clearHistoryButton = document.getElementById("clearHistoryButton");
     const newChatButton = document.getElementById("newChatButton"); // Add reference
 
     // Guard: if any required element is missing, do nothing
@@ -419,7 +419,9 @@ async function saveUserSearchHistory() {
             const reply = await getMistralReply(msg);
             botMsgDiv.classList.remove("italic");
             if (reply && reply.trim()) {
-                botMsgDiv.innerHTML = `<span class="font-bold text-gray-300">Cosmic AI:</span> <span>${escapeHTML(reply)}</span>`;
+                botMsgDiv.innerHTML = `<span class="font-bold text-gray-300">Cosmic AI:</span> <span></span>`;
+                const replySpan = botMsgDiv.querySelector("span:last-child");
+                await typewriter(replySpan, reply);
                 // Set reply for the last message
                 currentChatSession[currentChatSession.length - 1].reply = reply;
                 userSearchHistory[userSearchHistory.length - 1].messages = [...currentChatSession];
@@ -438,7 +440,9 @@ async function saveUserSearchHistory() {
             if (err && err.message) {
                 errMsg += "<br><span class='text-xs text-gray-400'>" + escapeHTML(err.message) + "</span>";
             }
-            botMsgDiv.innerHTML = `<span class="font-bold text-gray-300">Cosmic AI:</span> <span>${errMsg}</span>`;
+            botMsgDiv.innerHTML = `<span class="font-bold text-gray-300">Cosmic AI:</span> <span></span>`;
+            const replySpan = botMsgDiv.querySelector("span:last-child");
+            await typewriter(replySpan, errMsg);
             currentChatSession[currentChatSession.length - 1].reply = errMsg;
             userSearchHistory[userSearchHistory.length - 1].messages = [...currentChatSession];
             saveUserSearchHistory();
@@ -593,6 +597,31 @@ async function saveUserSearchHistory() {
                 await clearUserHistory();
                 alert("Your search history has been cleared.");
             }
+        });
+    }
+
+    // --- Add typewriter effect function ---
+    /**
+     * Typewriter effect for a message element.
+     * @param {HTMLElement} el - The element to type into.
+     * @param {string} text - The text to type.
+     * @param {number} [delay=10] - Delay in ms per character.
+     * @returns {Promise<void>}
+     */
+    function typewriter(el, text, delay = 10) {
+        return new Promise(resolve => {
+            el.innerHTML = "";
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    el.innerHTML += text[i] === "\n" ? "<br>" : text[i];
+                    i++;
+                    setTimeout(type, delay);
+                } else {
+                    resolve();
+                }
+            }
+            type();
         });
     }
 });

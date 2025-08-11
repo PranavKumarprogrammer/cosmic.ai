@@ -137,89 +137,120 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Login/Register panel switcher for new layout
+    const loginOuter = document.getElementById('loginOuter');
+    const switchBtn = document.getElementById('switchBtn');
+    const panelTopTitle = document.getElementById('panelTopTitle');
+    const panelTopDesc = document.getElementById('panelTopDesc');
+    const loginForm2 = document.getElementById('loginForm');
+    const registerForm2 = document.getElementById('registerForm');
+
+    if (switchBtn && panelTopTitle && panelTopDesc && loginForm2 && registerForm2) {
+        let isRegister = false;
+        switchBtn.onclick = function (e) {
+            e.preventDefault();
+            isRegister = !isRegister;
+            if (isRegister) {
+                // Show registration
+                panelTopTitle.textContent = "Registration";
+                panelTopDesc.textContent = "";
+                switchBtn.textContent = "Login";
+                loginForm2.style.display = "none";
+                registerForm2.style.display = "block";
+            } else {
+                // Show login
+                panelTopTitle.textContent = "Hello, Welcome!";
+                panelTopDesc.textContent = "Don't have an account?";
+                switchBtn.textContent = "Register";
+                loginForm2.style.display = "block";
+                registerForm2.style.display = "none";
+            }
+        };
+    }
 });
 
 
- // !! 3D Galaxy Background (Three.js) 
-        let scene, camera, renderer, stars, starGeo;
-        function initGalaxyBackground() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-            camera.position.z = 1;
-            camera.rotation.x = Math.PI / 2;
-            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('galaxyCanvas'), antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setClearColor(0x000000, 0);
-            starGeo = new THREE.BufferGeometry();
-            const positions = [];
-            const velocities = [];
-            const accelerations = [];
-            for (let i = 0; i < 6000; i++) {
-                positions.push(
-                    Math.random() * 600 - 300,
-                    Math.random() * 600 - 300,
-                    Math.random() * 600 - 300
-                );
-                velocities.push(0);
-                accelerations.push(0.02);
-            }
-            starGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-            starGeo.setAttribute('velocity', new THREE.Float32BufferAttribute(velocities, 1));
-            starGeo.setAttribute('acceleration', new THREE.Float32BufferAttribute(accelerations, 1));
-            const starMaterial = new THREE.PointsMaterial({
-                color: 0xffffff,
-                size: 1.5,
-                transparent: true,
-                opacity: 0.8,
-                map: createStarTexture(),
-                blending: THREE.AdditiveBlending
-            });
-            stars = new THREE.Points(starGeo, starMaterial);
-            scene.add(stars);
-            window.addEventListener('resize', onWindowResize, false);
+// !! 3D Galaxy Background (Three.js) 
+let scene, camera, renderer, stars, starGeo;
+function initGalaxyBackground() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+    camera.position.z = 1;
+    camera.rotation.x = Math.PI / 2;
+    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('galaxyCanvas'), antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0);
+    starGeo = new THREE.BufferGeometry();
+    const positions = [];
+    const velocities = [];
+    const accelerations = [];
+    for (let i = 0; i < 6000; i++) {
+        positions.push(
+            Math.random() * 600 - 300,
+            Math.random() * 600 - 300,
+            Math.random() * 600 - 300
+        );
+        velocities.push(0);
+        accelerations.push(0.02);
+    }
+    starGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    starGeo.setAttribute('velocity', new THREE.Float32BufferAttribute(velocities, 1));
+    starGeo.setAttribute('acceleration', new THREE.Float32BufferAttribute(accelerations, 1));
+    const starMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 1.5,
+        transparent: true,
+        opacity: 0.8,
+        map: createStarTexture(),
+        blending: THREE.AdditiveBlending
+    });
+    stars = new THREE.Points(starGeo, starMaterial);
+    scene.add(stars);
+    window.addEventListener('resize', onWindowResize, false);
+}
+function createStarTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 16; canvas.height = 16;
+    const context = canvas.getContext('2d');
+    const gradient = context.createRadialGradient(
+        canvas.width / 2,
+        canvas.height / 2,
+        0,
+        canvas.width / 2,
+        canvas.height / 2,
+        canvas.width / 2
+    );
+    gradient.addColorStop(0, 'rgba(255,255,255,1)');
+    gradient.addColorStop(0.2, 'rgba(200,200,200,1)');
+    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    return new THREE.CanvasTexture(canvas);
+}
+function animateGalaxy() {
+    requestAnimationFrame(animateGalaxy);
+    const positions = starGeo.attributes.position.array;
+    const velocities = starGeo.attributes.velocity.array;
+    const accelerations = starGeo.attributes.acceleration.array;
+    for (let i = 0; i < positions.length; i += 3) {
+        velocities[i / 3] += accelerations[i / 3];
+        positions[i + 2] += velocities[i / 3];
+        if (positions[i + 2] > 200) {
+            positions[i + 2] = -300;
+            velocities[i / 3] = 0;
         }
-        function createStarTexture() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 16; canvas.height = 16;
-            const context = canvas.getContext('2d');
-            const gradient = context.createRadialGradient(
-                canvas.width / 2,
-                canvas.height / 2,
-                0,
-                canvas.width / 2,
-                canvas.height / 2,
-                canvas.width / 2
-            );
-            gradient.addColorStop(0, 'rgba(255,255,255,1)');
-            gradient.addColorStop(0.2, 'rgba(200,200,200,1)');
-            gradient.addColorStop(1, 'rgba(0,0,0,0)');
-            context.fillStyle = gradient;
-            context.fillRect(0, 0, canvas.width, canvas.height);
-            return new THREE.CanvasTexture(canvas);
-        }
-        function animateGalaxy() {
-            requestAnimationFrame(animateGalaxy);
-            const positions = starGeo.attributes.position.array;
-            const velocities = starGeo.attributes.velocity.array;
-            const accelerations = starGeo.attributes.acceleration.array;
-            for (let i = 0; i < positions.length; i += 3) {
-                velocities[i / 3] += accelerations[i / 3];
-                positions[i + 2] += velocities[i / 3];
-                if (positions[i + 2] > 200) {
-                    positions[i + 2] = -300;
-                    velocities[i / 3] = 0;
-                }
-            }
-            starGeo.attributes.position.needsUpdate = true;
-            stars.rotation.y += 0.0005;
-            renderer.render(scene, camera);
-        }
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            initGalaxyBackground();
-            animateGalaxy();
-        });
+    }
+    starGeo.attributes.position.needsUpdate = true;
+    stars.rotation.y += 0.0005;
+    renderer.render(scene, camera);
+}
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+document.addEventListener('DOMContentLoaded', () => {
+    initGalaxyBackground();
+    animateGalaxy();
+});
