@@ -27,7 +27,7 @@ const firebaseConfig = {
 const GEMINI_API_KEY = "AIzaSyBNbIARlIfE2o_SbM8wwg14D85mn7fQQ-I";
 
 // The Mistral API key, now updated to the new key.
-const MISTRAL_API_KEY = "AIzaSyBNbIARlIfE2o_SbM8wwg14D85mn7fQQ-I";  
+const MISTRAL_API_KEY = "AIzaSyD0Bh8pwS6Q4fxi80cWlWgGuv2B5U-Q9nE";  
 
 
 // You can now use these variables directly in your application.
