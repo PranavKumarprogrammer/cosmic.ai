@@ -9,7 +9,7 @@
  */
 const firebaseConfig = {
     // The Firebase API key, now updated to the new key.
-    apiKey: "LExlCgPDHRGY3PLoUyuRKIMFl1a3Bgi4",  
+    apiKey: "AIzaSyBNbIARlIfE2o_SbM8wwg14D85mn7fQQ-I",  
     // The Firebase authentication domain.
     authDomain: "cosmic-ai-1e297.firebaseapp.com",
     // The Firebase project ID. Corrected from the original code.
@@ -24,10 +24,10 @@ const firebaseConfig = {
 
 // The Gemini API key, now updated to the new key.
 // The original code had an incorrect value here.
-const GEMINI_API_KEY = "LExlCgPDHRGY3PLoUyuRKIMFl1a3Bgi4";
+const GEMINI_API_KEY = "AIzaSyBNbIARlIfE2o_SbM8wwg14D85mn7fQQ-I";
 
 // The Mistral API key, now updated to the new key.
-const MISTRAL_API_KEY = "LExlCgPDHRGY3PLoUyuRKIMFl1a3Bgi4";  
+const MISTRAL_API_KEY = "AIzaSyBNbIARlIfE2o_SbM8wwg14D85mn7fQQ-I";  
 
 
 // You can now use these variables directly in your application.
