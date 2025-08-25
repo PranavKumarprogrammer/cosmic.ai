@@ -25,7 +25,8 @@ const a0_0x1ad8a9 = a0_0x3824;
         (parseInt(_0x1f1217(0x181)) / 0x7) *
           (-parseInt(_0x1f1217(0x182)) / 0x8) +
         -parseInt(_0x1f1217(0x17d)) / 0x9 +
-        (parseInt(_0x1f1217(0x185)) / 0xa) * (parseInt(_0x1f1217(0x180)) / 0xb);
+        (parseInt(_0x1f1217(0x185)) / 0xa) *
+          (parseInt(_0x1f1217(0x180)) / 0xb);
       if (_0x16d759 === _0x4d7de5) break;
       else _0x40e04e["push"](_0x40e04e["shift"]());
     } catch (_0x2160ce) {
@@ -33,7 +34,6 @@ const a0_0x1ad8a9 = a0_0x3824;
     }
   }
 })(a0_0x50b5, 0x852a3);
-
 function a0_0x50b5() {
   const _0x425dce = [
     "673832kSrOtR",
@@ -47,7 +47,7 @@ function a0_0x50b5() {
     "7VFkgwT",
     "5104504CeBVBO",
     "2OPOthU",
-    "LExlCgPDHRGY3PLoUyuRKIMFl1a3Bgi4", // <-- Updated MISTRAL API Key
+    "Mqi7XO31m9WsymCnEX7jL3tNbglgMTfz",
     "396020nUGLNo",
     "1269138vrloPz",
     "635393jFpidB",
@@ -58,7 +58,6 @@ function a0_0x50b5() {
   };
   return a0_0x50b5();
 }
-
 const firebaseConfig = {
     apiKey: a0_0x1ad8a9(0x184),
     authDomain: "cosmic-ai-1e297.firebaseapp.com",
