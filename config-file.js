@@ -33,6 +33,7 @@ const a0_0x1ad8a9 = a0_0x3824;
     }
   }
 })(a0_0x50b5, 0x852a3);
+
 function a0_0x50b5() {
   const _0x425dce = [
     "673832kSrOtR",
@@ -46,7 +47,7 @@ function a0_0x50b5() {
     "7VFkgwT",
     "5104504CeBVBO",
     "2OPOthU",
-    "AIzaSyBNbIARlIfE2o_SbM8wwg14D85mn7fQQ-I",
+    "LExlCgPDHRGY3PLoUyuRKIMFl1a3Bgi4", // <-- Updated MISTRAL API Key
     "396020nUGLNo",
     "1269138vrloPz",
     "635393jFpidB",
@@ -57,6 +58,7 @@ function a0_0x50b5() {
   };
   return a0_0x50b5();
 }
+
 const firebaseConfig = {
     apiKey: a0_0x1ad8a9(0x184),
     authDomain: "cosmic-ai-1e297.firebaseapp.com",
