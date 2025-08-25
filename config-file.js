@@ -1,4 +1,4 @@
-a0_0x3824(_0x528a1f, _0x4652ff) {
+function a0_0x3824(_0x528a1f, _0x4652ff) {
   const _0x50b5d4 = a0_0x50b5();
   return (
     (a0_0x3824 = function (_0x38243f, _0x27d14d) {
@@ -9,7 +9,6 @@ a0_0x3824(_0x528a1f, _0x4652ff) {
     a0_0x3824(_0x528a1f, _0x4652ff)
   );
 }
-
 const a0_0x1ad8a9 = a0_0x3824;
 (function (_0x2d22fe, _0x4d7de5) {
   const _0x1f1217 = a0_0x3824,
@@ -26,8 +25,7 @@ const a0_0x1ad8a9 = a0_0x3824;
         (parseInt(_0x1f1217(0x181)) / 0x7) *
           (-parseInt(_0x1f1217(0x182)) / 0x8) +
         -parseInt(_0x1f1217(0x17d)) / 0x9 +
-        (parseInt(_0x1f1217(0x185)) / 0xa) *
-          (parseInt(_0x1f1217(0x180)) / 0xb);
+        (parseInt(_0x1f1217(0x185)) / 0xa) * (parseInt(_0x1f1217(0x180)) / 0xb);
       if (_0x16d759 === _0x4d7de5) break;
       else _0x40e04e["push"](_0x40e04e["shift"]());
     } catch (_0x2160ce) {
@@ -49,7 +47,7 @@ function a0_0x50b5() {
     "7VFkgwT",
     "5104504CeBVBO",
     "2OPOthU",
-    "LExlCgPDHRGY3PLoUyuRKIMFl1a3Bgi4", // <-- Updated MISTRAL API KEY
+    "LExlCgPDHRGY3PLoUyuRKIMFl1a3Bgi4", // <-- Updated MISTRAL API Key
     "396020nUGLNo",
     "1269138vrloPz",
     "635393jFpidB",
